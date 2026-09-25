@@ -132,8 +132,14 @@ export const wedding: WeddingConfig = {
     enabled: true,
     autoVietQR: true, // tự tạo mã QR từ bankCode + accountNo (cần số tài khoản thật)
     accounts: [
-      { owner: 'Mừng cưới chú rể', bank: 'Vietcombank', bankCode: 'VCB', accountNo: '', accountName: 'THAI HUNG' },
-      { owner: 'Mừng cưới cô dâu', bank: 'Techcombank', bankCode: 'TCB', accountNo: '', accountName: 'LINH ANH' },
+      {
+        owner: 'Mừng cưới',
+        bank: 'PGBank',
+        bankCode: 'PGB',
+        accountNo: '2662625010412',
+        accountName: 'PHAM THAI HUNG',
+        qrImage: '/photos/qr-pgbank.png',
+      },
     ],
   },
 

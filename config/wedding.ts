@@ -73,8 +73,8 @@ export const wedding: WeddingConfig = {
     photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4379',
   },
   families: {
-    groom: { father: 'Ông Nguyễn Văn Hùng', mother: 'Bà Trần Thị Lan', address: 'Phường Hoàn Kiếm, Hà Nội' },
-    bride: { father: 'Ông Lê Văn Bình', mother: 'Bà Phạm Thị Hoa', address: 'Phường Tây Hồ, Hà Nội' },
+    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Phường Hoàn Kiếm, Hà Nội' },
+    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Phường Tây Hồ, Hà Nội' },
   },
 
   events: [
@@ -108,7 +108,7 @@ export const wedding: WeddingConfig = {
 
   photos: {
     hero: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4223',
-    thanks: '',
+    thanks: 'https://res.cloudinary.com/txyieslq/image/upload/v1790347916/ZHUN3301_1.jpg',
     gallery: [
       'https://res.cloudinary.com/txyieslq/image/upload/v1790346962/ZHUN3523.jpg',
       'https://res.cloudinary.com/txyieslq/image/upload/v1790346972/ZHUN3632.jpg',

@@ -73,30 +73,29 @@ export const wedding: WeddingConfig = {
     photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4379',
   },
   families: {
-    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Phường Hoàn Kiếm, Hà Nội' },
-    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Phường Tây Hồ, Hà Nội' },
+    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Thôn Nham Lang, xã Tiên La, tỉnh Hưng Yên' },
+    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng' },
   },
 
   events: [
     {
-      title: 'Lễ thành hôn',
+      title: 'Tư gia nhà gái',
       date: '2026-10-18',
-      time: '09:00',
-      place: 'Tư gia nhà trai',
-      address: 'Số 12 phố Hàng Bông, phường Hoàn Kiếm, Hà Nội',
+      time: '10:00',
+      main: true,
+      place: 'Tư gia nhà gái',
+      address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
     },
     {
-      title: 'Tiệc cưới',
+      title: 'Lễ thành hôn',
       date: '2026-10-18',
-      time: '11:00',
-      main: true,
-      place: 'Trung tâm tiệc cưới Hoa Sen',
-      hall: 'Sảnh Ngọc, tầng 2',
-      address: 'Số 1 phố Tràng Tiền, phường Hoàn Kiếm, Hà Nội',
+      time: '11:30',
+      place: 'Tư gia nhà trai',
+      address: 'Thôn Nham Lang, xã Tiên La, tỉnh Hưng Yên',
     },
   ],
   map: {
-    query: 'Số 1 Tràng Tiền, Hoàn Kiếm, Hà Nội',
+    query: 'Số 64 Tân Kim, Lê Thanh Nghị, Hải Phòng',
     embedUrl: '', // hoặc dán src của iframe "Nhúng bản đồ" từ Google Maps
   },
 

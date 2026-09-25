@@ -138,7 +138,7 @@ export const wedding: WeddingConfig = {
   },
 
   // Nhạc: bỏ file vào public/music rồi ghi "/music/ten-bai.mp3". Để trống = hộp nhạc tự tổng hợp.
-  music: { enabled: true, src: '', volume: 0.6 },
+  music: { enabled: true, src: '/music/beautiful-in-white.mp3', volume: 0.6 },
 
   wishes: [
     { name: 'Thu Hà', message: 'Chúc hai bạn trăm năm hạnh phúc, sớm có tin vui nhé!' },

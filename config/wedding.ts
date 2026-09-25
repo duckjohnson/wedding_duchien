@@ -61,14 +61,14 @@ export const wedding: WeddingConfig = {
   groom: {
     name: 'Thái Hùng',
     fullName: 'Thái Hùng',
-    role: 'Chú rể',
+    role: '',
     bio: '',
     photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN3877_1',
   },
   bride: {
     name: 'Linh Anh',
     fullName: 'Linh Anh',
-    role: 'Cô dâu',
+    role: '',
     bio: '',
     photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4379',
   },

@@ -153,7 +153,7 @@ export const wedding: WeddingConfig = {
 
   meta: {
     description: 'Trân trọng kính mời bạn đến dự lễ thành hôn của chúng mình.',
-    ogImage: '', // ví dụ "/photos/og.jpg" (1200×630) – ảnh hiện khi gửi link qua Zalo, Facebook
+    ogImage: 'https://res.cloudinary.com/txyieslq/image/upload/c_fill,g_face,w_1200,h_630,f_jpg,q_auto/ZHUN4223',
   },
 
   // Ghi đè màu, ví dụ: { son: '#1F3A5F', kim: '#B89B5E' }

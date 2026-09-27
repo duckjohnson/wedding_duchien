@@ -79,19 +79,19 @@ export const wedding: WeddingConfig = {
 
   events: [
     {
-      title: 'Tư gia nhà gái',
+      title: 'Bữa cơm thân mật',
+      date: '2026-10-17',
+      time: '18:00',
+      place: 'Tư gia nhà gái',
+      address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
+    },
+    {
+      title: 'Bữa cơm vu quy',
       date: '2026-10-18',
       time: '10:00',
       main: true,
       place: 'Tư gia nhà gái',
       address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
-    },
-    {
-      title: 'Lễ thành hôn',
-      date: '2026-10-18',
-      time: '11:30',
-      place: 'Tư gia nhà trai',
-      address: 'Thôn Nham Lang, xã Tiên La, tỉnh Hưng Yên',
     },
   ],
   map: {

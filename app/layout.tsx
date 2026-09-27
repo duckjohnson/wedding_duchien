@@ -4,7 +4,7 @@ import { wedding } from '@/config/wedding';
 import { fontSans, fontScript, fontSerif } from './fonts';
 import './globals.css';
 
-const title = `Thiệp cưới ${wedding.groom.name} & ${wedding.bride.name}`;
+const title = `Thiệp cưới ${wedding.bride.name} & ${wedding.groom.name}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),

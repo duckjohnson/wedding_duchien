@@ -19,9 +19,9 @@ export function Hero({ w, v }: P) {
         </div>
       </div>
       <h1 className="hero-names" id="heroTitle" tabIndex={-1}>
-        <span className="hn" data-reveal="up" style={delay(0.6)}>{w.groom.name}</span>
+        <span className="hn" data-reveal="up" style={delay(0.6)}>{w.bride.name}</span>
         <span className="hn-amp" data-reveal="zoom" style={delay(0.8)}>&amp;</span>
-        <span className="hn" data-reveal="up" style={delay(0.95)}>{w.bride.name}</span>
+        <span className="hn" data-reveal="up" style={delay(0.95)}>{w.groom.name}</span>
       </h1>
       <div className="datelock" data-reveal="up" style={delay(1.15)}>
         <span className="dl-side">{v.weekday}</span>
@@ -50,20 +50,20 @@ export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
     <section className="sec letter" id="loimoi" aria-labelledby="t-letter">
       <h2 className="sr-only" id="t-letter">Thư mời</h2>
       <div className="families">
-        {fam('Nhà trai', w.families.groom, 'left', 0)}
-        {fam('Nhà gái', w.families.bride, 'right', 0.1)}
+        {fam('Nhà gái', w.families.bride, 'left', 0)}
+        {fam('Nhà trai', w.families.groom, 'right', 0.1)}
       </div>
       <div className="hy" data-reveal="zoom" aria-hidden="true">囍</div>
       <p className="announce" data-reveal="up">Trân trọng báo tin lễ thành hôn của con chúng tôi</p>
       <div className="pair">
         <div data-reveal="up">
-          {w.groom.role ? <span className="pair-role">{w.groom.role}</span> : null}
-          <span className="pair-name">{w.groom.fullName}</span>
+          {w.bride.role ? <span className="pair-role">{w.bride.role}</span> : null}
+          <span className="pair-name">{w.bride.fullName}</span>
         </div>
         <span className="pair-amp" data-reveal="zoom" aria-hidden="true">&amp;</span>
         <div data-reveal="up" style={delay(0.1)}>
-          {w.bride.role ? <span className="pair-role">{w.bride.role}</span> : null}
-          <span className="pair-name">{w.bride.fullName}</span>
+          {w.groom.role ? <span className="pair-role">{w.groom.role}</span> : null}
+          <span className="pair-name">{w.groom.fullName}</span>
         </div>
       </div>
       <Divider />
@@ -77,12 +77,12 @@ export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
 /* ===================== CHÚ RỂ & CÔ DÂU ===================== */
 export function Couple({ w, v }: P) {
   const people = [
-    { p: w.groom, role: 'Chú rể', src: v.photos.groom, alt: 'Chân dung chú rể', cls: 'portrait', dir: 'left', d: 0 },
-    { p: w.bride, role: 'Cô dâu', src: v.photos.bride, alt: 'Chân dung cô dâu', cls: 'portrait portrait--low', dir: 'right', d: 0.15 },
+    { p: w.bride, role: 'Cô dâu', src: v.photos.bride, alt: 'Chân dung cô dâu', cls: 'portrait', dir: 'left', d: 0 },
+    { p: w.groom, role: 'Chú rể', src: v.photos.groom, alt: 'Chân dung chú rể', cls: 'portrait portrait--low', dir: 'right', d: 0.15 },
   ] as const;
   return (
     <section className="sec couple" aria-labelledby="t-couple">
-      <SectionHead id="t-couple" title="Chú rể & Cô dâu" />
+      <SectionHead id="t-couple" title="Cô dâu & Chú rể" />
       <div className="couple-grid">
         {people.map(({ p, role, src, alt, cls, dir, d }) => (
           <figure key={role} className={cls} data-reveal={dir} style={delay(d)}>
@@ -188,7 +188,7 @@ export function Thanks({ w, v }: P) {
         </div>
         <h2 className="thanks-title" id="t-thanks" data-reveal="up">Cảm ơn</h2>
         <p className="thanks-text" data-reveal="up">{w.thanks}</p>
-        <p className="thanks-sign" data-reveal="up">{w.groom.name} &amp; {w.bride.name}</p>
+        <p className="thanks-sign" data-reveal="up">{w.bride.name} &amp; {w.groom.name}</p>
       </section>
       <footer className="foot">{v.dateShort}</footer>
     </>

@@ -79,9 +79,9 @@ export function Hero({ w, v }: P) {
       {/* Lớp 3: Tên cô dâu chú rể và thông tin dịch chuyển nhanh hơn */}
       <motion.div style={{ y: reduced ? 0 : yText }}>
         <h1 className="hero-names" id="heroTitle" tabIndex={-1}>
-          <span className="hn" data-reveal="up" style={delay(0.6)}>{w.groom.name}</span>
+          <span className="hn" data-reveal="up" style={delay(0.6)}>{w.bride.name}</span>
           <span className="hn-amp" data-reveal="zoom" style={delay(0.8)}>&amp;</span>
-          <span className="hn" data-reveal="up" style={delay(0.95)}>{w.bride.name}</span>
+          <span className="hn" data-reveal="up" style={delay(0.95)}>{w.groom.name}</span>
         </h1>
         <div className="datelock" data-reveal="up" style={delay(1.15)}>
           <span className="dl-side">{v.weekday}</span>
@@ -114,20 +114,20 @@ export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
     <section className="sec letter" id="loimoi" aria-labelledby="t-letter">
       <h2 className="sr-only" id="t-letter">Thư mời</h2>
       <div className="families">
-        {fam('Nhà trai', w.families.groom, 'left', 0)}
-        {fam('Nhà gái', w.families.bride, 'right', 0.1)}
+        {fam('Nhà gái', w.families.bride, 'left', 0)}
+        {fam('Nhà trai', w.families.groom, 'right', 0.1)}
       </div>
       <div className="hy" data-reveal="zoom" aria-hidden="true">囍</div>
       <p className="announce" data-reveal="up">Trân trọng báo tin lễ thành hôn của con chúng tôi</p>
       <div className="pair">
         <div data-reveal="up">
-          {w.groom.role ? <span className="pair-role">{w.groom.role}</span> : null}
-          <span className="pair-name">{w.groom.fullName}</span>
+          {w.bride.role ? <span className="pair-role">{w.bride.role}</span> : null}
+          <span className="pair-name">{w.bride.fullName}</span>
         </div>
         <span className="pair-amp" data-reveal="zoom" aria-hidden="true">&amp;</span>
         <div data-reveal="up" style={delay(0.1)}>
-          {w.bride.role ? <span className="pair-role">{w.bride.role}</span> : null}
-          <span className="pair-name">{w.bride.fullName}</span>
+          {w.groom.role ? <span className="pair-role">{w.groom.role}</span> : null}
+          <span className="pair-name">{w.groom.fullName}</span>
         </div>
       </div>
       <Divider />
@@ -149,26 +149,26 @@ export function Couple({ w, v }: P) {
 
   const people = [
     {
-      p: w.groom,
-      role: 'Chú rể',
-      src: v.photos.groom,
-      alt: 'Chân dung chú rể',
-      cls: 'portrait',
-      rotateInitial: -40,
-      xInitial: -50,
-      delay: 0,
-      defaultBio: 'Chàng trai điềm tĩnh, ấm áp và luôn chu đáo.',
-    },
-    {
       p: w.bride,
       role: 'Cô dâu',
       src: v.photos.bride,
       alt: 'Chân dung cô dâu',
+      cls: 'portrait',
+      rotateInitial: -40,
+      xInitial: -50,
+      delay: 0,
+      defaultBio: 'Cô gái dịu dàng, nụ cười rạng rỡ và tràn đầy yêu thương.',
+    },
+    {
+      p: w.groom,
+      role: 'Chú rể',
+      src: v.photos.groom,
+      alt: 'Chân dung chú rể',
       cls: 'portrait portrait--low',
       rotateInitial: 40,
       xInitial: 50,
       delay: 0.16,
-      defaultBio: 'Cô gái dịu dàng, nụ cười rạng rỡ và tràn đầy yêu thương.',
+      defaultBio: 'Chàng trai điềm tĩnh, ấm áp và luôn chu đáo.',
     },
   ];
 

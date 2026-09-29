@@ -34,7 +34,7 @@ export function WishesBook() {
 
     const name = String(fd.get('name') ?? '').trim();
     const message = String(fd.get('message') ?? '').trim();
-    const side = String(fd.get('side') ?? 'groom');
+    const side = String(fd.get('side') ?? 'bride');
     const website = String(fd.get('website') ?? '');
 
     if (!name || name.length < 2) {
@@ -53,7 +53,7 @@ export function WishesBook() {
       id: tempId,
       name,
       message,
-      side: (side as WishSide) || 'groom',
+      side: (side as WishSide) || 'bride',
       createdAt: new Date().toISOString(),
       approved: true,
     };
@@ -151,9 +151,9 @@ export function WishesBook() {
 
               <div className="wishes-form-group">
                 <label htmlFor={`${formId}-side`} className="wishes-label">Bạn là khách của</label>
-                <select id={`${formId}-side`} name="side" className="wishes-select" defaultValue="groom">
-                  <option value="groom">Nhà trai</option>
+                <select id={`${formId}-side`} name="side" className="wishes-select" defaultValue="bride">
                   <option value="bride">Nhà gái</option>
+                  <option value="groom">Nhà trai</option>
                   <option value="both">Bạn chung cả hai</option>
                 </select>
               </div>

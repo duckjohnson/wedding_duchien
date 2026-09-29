@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     phone: clip(body.phone, 20),
     attend: clip(body.attend, 12) as AttendChoice,
     guests: clip(body.guests, 8) || '1',
-    side: clip(body.side, 20) || 'Nhà trai',
+    side: clip(body.side, 20) || 'Nhà gái',
     message: clip(body.message, 500),
     linkGuest: clip(body.linkGuest, 60),
   };

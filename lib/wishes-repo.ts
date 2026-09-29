@@ -32,8 +32,8 @@ export interface WishesRepo {
 }
 
 // Kiểm tra biến môi trường Upstash Redis
-const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
-const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
 const hasRedis = Boolean(redisUrl && redisToken);
 
 // ==========================================
@@ -200,7 +200,7 @@ class MemoryWishesRepo implements WishesRepo {
   constructor() {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
-        '[WishesRepo] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN chưa được đặt. Đang chạy ở chế độ in-memory fallback.',
+        '[WishesRepo] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN (hoặc KV_REST_API_URL / KV_REST_API_TOKEN) chưa được đặt. Đang chạy ở chế độ in-memory fallback.',
       );
     }
   }

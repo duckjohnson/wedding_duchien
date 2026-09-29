@@ -116,8 +116,15 @@ export function getAlbumImageUrl(
     gravity?: string;
   } = {},
 ): string {
-  const { width = 900, aspectRatio = '3:4', crop = 'c_fill', gravity = 'g_faces' } = options;
-  const transforms = [crop, gravity, `ar_${aspectRatio}`, `w_${width}`, 'f_auto', 'q_auto'].join(',');
+  const { width = 900, aspectRatio, crop = 'c_limit', gravity } = options;
+  const transforms = [
+    crop,
+    gravity,
+    aspectRatio ? `ar_${aspectRatio}` : null,
+    `w_${width}`,
+    'f_auto',
+    'q_auto',
+  ].filter(Boolean).join(',');
   return `https://res.cloudinary.com/txyieslq/image/upload/${transforms}/${publicId}`;
 }
 

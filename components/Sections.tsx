@@ -118,18 +118,6 @@ export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
         {fam('Nhà trai', w.families.groom, 'right', 0.1)}
       </div>
       <div className="hy" data-reveal="zoom" aria-hidden="true">囍</div>
-      <p className="announce" data-reveal="up">Trân trọng báo tin lễ thành hôn của con chúng tôi</p>
-      <div className="pair">
-        <div data-reveal="up">
-          {w.bride.role ? <span className="pair-role">{w.bride.role}</span> : null}
-          <span className="pair-name">{w.bride.fullName}</span>
-        </div>
-        <span className="pair-amp" data-reveal="zoom" aria-hidden="true">&amp;</span>
-        <div data-reveal="up" style={delay(0.1)}>
-          {w.groom.role ? <span className="pair-role">{w.groom.role}</span> : null}
-          <span className="pair-name">{w.groom.fullName}</span>
-        </div>
-      </div>
       <Divider />
       <p className="invite-lead" data-reveal="up">Trân trọng kính mời</p>
       <p className="guest-name" data-reveal="up">{guest}</p>

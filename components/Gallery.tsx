@@ -252,61 +252,38 @@ export function Gallery({ items: _items }: Props) {
 
       <div className="gallery">
         {photos.map((photo, i) => {
-          const shape = SHAPES[i % SHAPES.length];
           const gridUrl = getAlbumImageUrl(photo.publicId, {
             width: 800,
-            aspectRatio: shape === 'w' ? '3:2' : shape === 'n' ? '4:3' : '3:4',
-            crop: 'c_fill',
-            gravity: 'g_faces',
+            crop: 'c_scale',
           });
 
           return (
-            <motion.div
+            <div
               key={photo.id}
-              className={`g-item ${shape}`}
-              initial={reduced ? { opacity: 0 } : { opacity: 0, rotateX: 60, y: 25 }}
-              whileInView={reduced ? { opacity: 1 } : { opacity: 1, rotateX: 0, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{
-                duration: 0.65,
-                delay: (i % 4) * 0.08,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              style={{ transformStyle: 'preserve-3d' }}
+              className="g-item masonry-item"
             >
-              <Tilt
-                tiltMaxAngleX={10}
-                tiltMaxAngleY={10}
-                perspective={1000}
-                scale={1.02}
-                tiltEnable={!reduced}
-                glareEnable={false}
-                style={{ width: '100%', height: '100%', borderRadius: '12px', overflow: 'hidden' }}
+              <button
+                type="button"
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                  background: 'none',
+                  border: 0,
+                  padding: 0,
+                  cursor: 'zoom-in',
+                  display: 'block',
+                }}
+                aria-label="Xem ảnh cưới phóng to"
+                onClick={() => openLightbox(i)}
               >
-                <button
-                  type="button"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    position: 'relative',
-                    background: 'none',
-                    border: 0,
-                    padding: 0,
-                    cursor: 'zoom-in',
-                    display: 'block',
-                  }}
-                  aria-label="Xem ảnh cưới phóng to"
-                  onClick={() => openLightbox(i)}
-                >
-                  <Image
-                    src={gridUrl}
-                    alt=""
-                    fill
-                    sizes={SIZES[shape]}
-                  />
-                </button>
-              </Tilt>
-            </motion.div>
+                <img
+                  src={gridUrl}
+                  alt=""
+                  loading="lazy"
+                  style={{ display: 'block', width: '100%', height: 'auto' }}
+                />
+              </button>
+            </div>
           );
         })}
       </div>

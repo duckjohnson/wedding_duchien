@@ -81,7 +81,7 @@ export const wedding: WeddingConfig = {
     {
       title: 'Bữa cơm thân mật',
       date: '2026-10-17',
-      time: '18:00',
+      time: '17:00',
       place: 'Tư gia nhà gái',
       address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
     },

@@ -106,7 +106,7 @@ export const wedding: WeddingConfig = {
     'Cảm ơn bạn đã dành thời gian đọc thiệp và chung vui cùng chúng mình. Hẹn gặp bạn trong ngày vui!',
 
   photos: {
-    hero: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4223',
+    hero: 'https://res.cloudinary.com/txyieslq/image/upload/v1790347007/ZHUN4427.jpg',
     thanks: 'https://res.cloudinary.com/txyieslq/image/upload/v1790347916/ZHUN3301_1.jpg',
     gallery: [
       'https://res.cloudinary.com/txyieslq/image/upload/v1790346962/ZHUN3523.jpg',

@@ -7,6 +7,8 @@ import { Gift } from '@/components/Gift';
 import { InviteProvider } from '@/components/InviteProvider';
 import { SvgSprite } from '@/components/Ornaments';
 import { Rsvp } from '@/components/Rsvp';
+import { WishesBook } from '@/components/WishesBook';
+import { FloatingWishesWrapper } from '@/components/FloatingWishesWrapper';
 import { CalendarSection, Couple, Events, Hero, Letter, MapSection, Thanks } from '@/components/Sections';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
@@ -38,13 +40,15 @@ export default async function Page({ searchParams }: Props) {
         <Gallery items={v.gallery} />
         <MapSection v={v} />
         {wedding.rsvp.enabled ? (
-          <Rsvp guest={guest} guestFromLink={fromLink} deadline={wedding.rsvp.deadline} initialWishes={wedding.wishes} />
+          <Rsvp guest={guest} guestFromLink={fromLink} deadline={wedding.rsvp.deadline} />
         ) : null}
+        <WishesBook />
         {wedding.gift.enabled ? <Gift accounts={v.gifts} /> : null}
         <Thanks w={wedding} v={v} />
       </main>
 
       <MusicButton />
+      <FloatingWishesWrapper />
       <Petals />
     </InviteProvider>
   );

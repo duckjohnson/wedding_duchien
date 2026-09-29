@@ -1,135 +1,393 @@
 'use client';
 
 import Image from 'next/image';
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import Tilt from 'react-parallax-tilt';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectCoverflow, Navigation, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+
+// Swiper core styles
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+
+import { albumPhotos, getAlbumImageUrl, getFullImageUrl, type AlbumPhoto } from '@/data/album';
 import type { GalleryItem } from '@/lib/view';
 import { prefersReducedMotion } from './InviteProvider';
-import { delay, SectionHead } from './Ornaments';
+import { SectionHead } from './Ornaments';
 
-const SIZES = { t: '(max-width: 480px) 50vw, 240px', n: '(max-width: 480px) 50vw, 240px', w: '(max-width: 480px) 100vw, 480px' };
+const SHAPES = ['t', 'n', 'n', 'w', 'n', 't', 'n', 'w', 't', 't', 'w'] as const;
+const SIZES = {
+  t: '(max-width: 480px) 50vw, 240px',
+  n: '(max-width: 480px) 50vw, 240px',
+  w: '(max-width: 480px) 100vw, 480px',
+};
 
-export function Gallery({ items }: { items: GalleryItem[] }) {
-  const [index, setIndex] = useState<number | null>(null);
-  const [visible, setVisible] = useState(false);
-  const lastFocus = useRef<HTMLElement | null>(null);
-  const closeBtn = useRef<HTMLButtonElement>(null);
-  const dialog = useRef<HTMLDivElement>(null);
-  const startX = useRef<number | null>(null);
-  const [swapKey, setSwapKey] = useState(0);
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const isOpen = index !== null;
+type Props = {
+  items?: GalleryItem[];
+};
 
-  const open = (i: number) => {
-    clearTimeout(hideTimer.current);
-    lastFocus.current = document.activeElement as HTMLElement;
-    setIndex(i);
-    setSwapKey((k) => k + 1);
-  };
+export function Gallery({ items: _items }: Props) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [reduced, setReduced] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  const close = useCallback(() => {
-    setVisible(false);
-    hideTimer.current = setTimeout(() => setIndex(null), prefersReducedMotion() ? 0 : 300);
-    lastFocus.current?.focus();
+  const swiperRef = useRef<SwiperType | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  const photos: AlbumPhoto[] = albumPhotos;
+  const total = photos.length;
+
+  useEffect(() => {
+    setReduced(prefersReducedMotion());
   }, []);
 
-  const nav = useCallback(
-    (d: number) => {
-      setIndex((i) => (i === null ? i : (i + d + items.length) % items.length));
-      setSwapKey((k) => k + 1);
+  // Tạm dừng khi tab ẩn / Resume khi tab hiện
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (!swiperRef.current || reduced) return;
+      if (document.hidden) {
+        swiperRef.current.autoplay.stop();
+      } else {
+        swiperRef.current.autoplay.start();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [reduced]);
+
+  // Tạm dừng khi carousel ra khỏi viewport / Resume khi vào lại
+  useEffect(() => {
+    if (!containerRef.current || reduced) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!swiperRef.current || reduced) return;
+        if (entry.isIntersecting) {
+          swiperRef.current.autoplay.start();
+        } else {
+          swiperRef.current.autoplay.stop();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [reduced]);
+
+  // Hẹn giờ chạy lại autoplay sau 3s kể từ khi người dùng thả tay
+  const handleTouchEndOrInteraction = () => {
+    if (!swiperRef.current || reduced) return;
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      if (swiperRef.current && !reduced) {
+        swiperRef.current.autoplay.start();
+      }
+    }, 3000);
+  };
+
+  const openLightbox = (i: number) => {
+    setLightboxIndex(i);
+  };
+
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+  }, []);
+
+  const navLightbox = useCallback(
+    (dir: number) => {
+      setLightboxIndex((prev) => (prev === null ? null : (prev + dir + total) % total));
     },
-    [items.length],
+    [total],
   );
 
-  // Hiện dần + khóa cuộn khi mở
+  // Khóa cuộn màn hình khi mở lightbox
   useEffect(() => {
-    if (!isOpen) return;
-    const raf = requestAnimationFrame(() => setVisible(true));
+    if (lightboxIndex === null) return;
     document.body.style.overflow = 'hidden';
-    closeBtn.current?.focus();
+    closeBtnRef.current?.focus();
     return () => {
-      cancelAnimationFrame(raf);
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [lightboxIndex]);
 
-  const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Escape') close();
-    else if (e.key === 'ArrowLeft') nav(-1);
-    else if (e.key === 'ArrowRight') nav(1);
-    else if (e.key === 'Tab' && dialog.current) {
-      const buttons = Array.from(dialog.current.querySelectorAll('button'));
-      const i = buttons.indexOf(document.activeElement as HTMLButtonElement);
-      e.preventDefault();
-      buttons[(i + (e.shiftKey ? -1 : 1) + buttons.length) % buttons.length].focus();
+  // Phím tắt bàn phím
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (lightboxIndex !== null) {
+      if (e.key === 'Escape') closeLightbox();
+      else if (e.key === 'ArrowLeft') navLightbox(-1);
+      else if (e.key === 'ArrowRight') navLightbox(1);
     }
   };
 
-  const onPointerDown = (e: PointerEvent) => {
-    startX.current = e.clientX;
-  };
-  const onPointerUp = (e: PointerEvent) => {
-    if (startX.current === null) return;
-    const dx = e.clientX - startX.current;
-    startX.current = null;
-    if (Math.abs(dx) > 50) nav(dx < 0 ? 1 : -1);
+  // Vuốt chạm trong Lightbox
+  const handleLbTouchStart = (e: TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
   };
 
-  if (!items.length) return null;
-  const current = index === null ? null : items[index];
+  const handleLbTouchEnd = (e: TouchEvent) => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    setTouchStartX(null);
+    if (Math.abs(dx) > 50) {
+      navLightbox(dx < 0 ? 1 : -1);
+    }
+  };
+
+  const activePhoto = lightboxIndex !== null ? photos[lightboxIndex] : null;
 
   return (
-    <section className="sec album" aria-labelledby="t-album">
+    <section className="sec album" aria-labelledby="t-album" onKeyDown={handleKeyDown}>
       <SectionHead id="t-album" title="Album ảnh cưới" sub="Chạm vào ảnh để xem lớn" />
-      <div className="gallery">
-        {items.map((g, i) => (
-          <button
-            key={i}
-            type="button"
-            className={`g-item ${g.shape}`}
-            aria-label={`Xem ${g.alt.toLowerCase()}`}
-            data-reveal="zoom"
-            style={delay((i % 4) * 0.08)}
-            onClick={() => open(i)}
-          >
-            <Image src={g.src} alt="" fill sizes={SIZES[g.shape]} />
-          </button>
-        ))}
+
+      {/* ===================== 1. 3D COVERFLOW CAROUSEL (SWIPER) ===================== */}
+      <div className="album-swiper-wrapper" ref={containerRef}>
+        <Swiper
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          modules={[EffectCoverflow, Autoplay, Pagination, Navigation]}
+          effect={reduced ? 'slide' : 'coverflow'}
+          grabCursor={true}
+          centeredSlides={true}
+          slidesPerView="auto"
+          loop={true}
+          speed={1100}
+          slideToClickedSlide={true}
+          coverflowEffect={{
+            rotate: 30,
+            stretch: 0,
+            depth: 120,
+            modifier: 1,
+            scale: 0.85,
+            slideShadows: false,
+          }}
+          autoplay={
+            reduced
+              ? false
+              : {
+                  delay: 3600,
+                  disableOnInteraction: false,
+                  pauseOnMouseEnter: true,
+                }
+          }
+          pagination={{
+            el: '.album-swiper-pagination',
+            clickable: true,
+          }}
+          navigation={{
+            prevEl: '.album-swiper-prev',
+            nextEl: '.album-swiper-next',
+          }}
+          onTouchEnd={handleTouchEndOrInteraction}
+          onSliderMove={() => {
+            if (resumeTimer.current) clearTimeout(resumeTimer.current);
+          }}
+          className="album-swiper"
+        >
+          {photos.map((photo, i) => {
+            const carouselUrl = getAlbumImageUrl(photo.publicId, {
+              width: 900,
+              aspectRatio: '3:4',
+              crop: 'c_fill',
+              gravity: 'g_faces',
+            });
+
+            return (
+              <SwiperSlide
+                key={photo.id}
+                onClick={() => {
+                  if (swiperRef.current) {
+                    // Nếu là slide ở giữa (active): mở lightbox; nếu ở hai bên: swiper tự trượt về giữa
+                    if (swiperRef.current.realIndex === i) {
+                      openLightbox(i);
+                    }
+                  }
+                }}
+              >
+                <Image
+                  src={carouselUrl}
+                  alt=""
+                  fill
+                  sizes="(max-width: 480px) 68vw, (max-width: 1024px) 300px, 320px"
+                  priority={i === 0}
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+
+        {/* Nút điều hướng desktop (ẩn trên mobile, desktop hiện mờ khi hover) */}
+        <button
+          type="button"
+          className="album-swiper-nav-btn album-swiper-prev"
+          aria-label="Xem ảnh trước"
+        >
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+            <path d="m12 4-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          className="album-swiper-nav-btn album-swiper-next"
+          aria-label="Xem ảnh tiếp theo"
+        >
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+            <path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        {/* Dãy dots nhỏ tinh tế bên dưới */}
+        <div className="album-swiper-pagination" />
       </div>
 
-      {current ? (
-        <div
-          ref={dialog}
-          className={visible ? 'lightbox is-open' : 'lightbox'}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Xem ảnh cưới"
-          onClick={(e) => e.target === e.currentTarget && close()}
-          onKeyDown={onKeyDown}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-        >
-          <Image
-            key={swapKey}
-            className="lb-img swap"
-            src={current.src}
-            alt={current.alt}
-            width={1600}
-            height={1200}
-            sizes="92vw"
-            draggable={false}
-          />
-          <button ref={closeBtn} className="lb-btn lb-close" type="button" aria-label="Đóng" onClick={close}>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.6" /></svg>
-          </button>
-          <button className="lb-btn lb-prev" type="button" aria-label="Ảnh trước" onClick={() => nav(-1)}>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12 4-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
-          </button>
-          <button className="lb-btn lb-next" type="button" aria-label="Ảnh sau" onClick={() => nav(1)}>
-            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
-          </button>
-          <p className="lb-count">{index! + 1} / {items.length}</p>
-        </div>
-      ) : null}
+      {/* ===================== 2. LƯỚI ẢNH 3D TILT ===================== */}
+      <h3 className="gallery-grid-title">Khoảnh khắc trọn vẹn</h3>
+
+      <div className="gallery">
+        {photos.map((photo, i) => {
+          const shape = SHAPES[i % SHAPES.length];
+          const gridUrl = getAlbumImageUrl(photo.publicId, {
+            width: 800,
+            aspectRatio: shape === 'w' ? '3:2' : shape === 'n' ? '4:3' : '3:4',
+            crop: 'c_fill',
+            gravity: 'g_faces',
+          });
+
+          return (
+            <motion.div
+              key={photo.id}
+              className={`g-item ${shape}`}
+              initial={reduced ? { opacity: 0 } : { opacity: 0, rotateX: 60, y: 25 }}
+              whileInView={reduced ? { opacity: 1 } : { opacity: 1, rotateX: 0, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{
+                duration: 0.65,
+                delay: (i % 4) * 0.08,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <Tilt
+                tiltMaxAngleX={10}
+                tiltMaxAngleY={10}
+                perspective={1000}
+                scale={1.02}
+                tiltEnable={!reduced}
+                glareEnable={false}
+                style={{ width: '100%', height: '100%', borderRadius: '12px', overflow: 'hidden' }}
+              >
+                <button
+                  type="button"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative',
+                    background: 'none',
+                    border: 0,
+                    padding: 0,
+                    cursor: 'zoom-in',
+                    display: 'block',
+                  }}
+                  aria-label="Xem ảnh cưới phóng to"
+                  onClick={() => openLightbox(i)}
+                >
+                  <Image
+                    src={gridUrl}
+                    alt=""
+                    fill
+                    sizes={SIZES[shape]}
+                  />
+                </button>
+              </Tilt>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* ===================== 3. LIGHTBOX ANIMATION ===================== */}
+      <AnimatePresence>
+        {activePhoto && lightboxIndex !== null && (
+          <motion.div
+            ref={dialogRef}
+            className="lightbox is-open"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Xem ảnh cưới lớn"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={(e) => e.target === e.currentTarget && closeLightbox()}
+            onTouchStart={handleLbTouchStart}
+            onTouchEnd={handleLbTouchEnd}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 280 }}
+              style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Image
+                key={activePhoto.id}
+                className="lb-img"
+                src={getFullImageUrl(activePhoto.publicId)}
+                alt=""
+                width={1600}
+                height={1200}
+                sizes="94vw"
+                draggable={false}
+                priority
+              />
+            </motion.div>
+
+            <button
+              ref={closeBtnRef}
+              className="lb-btn lb-close"
+              type="button"
+              aria-label="Đóng xem ảnh lớn"
+              onClick={closeLightbox}
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M5 5l10 10M15 5 5 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <button
+              className="lb-btn lb-prev"
+              type="button"
+              aria-label="Ảnh trước"
+              onClick={() => navLightbox(-1)}
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m12 4-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <button
+              className="lb-btn lb-next"
+              type="button"
+              aria-label="Ảnh sau"
+              onClick={() => navLightbox(1)}
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m8 4 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </button>
+
+            <p className="lb-count">
+              {lightboxIndex + 1} / {total}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

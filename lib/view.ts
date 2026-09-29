@@ -33,7 +33,7 @@ const photo = (src: string | undefined, label: string, w: number, h: number, ton
 /* ---------- Album: nhịp dọc / ngang lặp lại mỗi 8 ảnh ---------- */
 export type GalleryShape = 't' | 'n' | 'w';
 export type GalleryItem = { src: string; alt: string; shape: GalleryShape };
-const SHAPES: GalleryShape[] = ['t', 'n', 'n', 'w', 'n', 't', 'n', 'w'];
+const SHAPES: GalleryShape[] = ['t', 'n', 'n', 'w', 'n', 't', 'n', 'w', 't', 't', 'w'];
 const SIZE: Record<GalleryShape, [number, number]> = { t: [600, 900], n: [600, 450], w: [900, 600] };
 
 /* ---------- Lịch tháng (tuần bắt đầu từ thứ hai) ---------- */

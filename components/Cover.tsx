@@ -37,15 +37,14 @@ export function Cover({ groomName, brideName, dateShort, guest }: Props) {
       <div className="cover-inner">
         <p className="cover-kicker">Thiệp mời cưới</p>
         <p className="cover-names">
-          {brideName}
-          <span className="amp">&amp;</span>
           {groomName}
+          <span className="amp">&amp;</span>
+          {brideName}
         </p>
         <button className="env" type="button" aria-label="Mở thiệp mời" onClick={open}>
           <span className="env-back" />
           <span className="env-card" aria-hidden="true">
             <span className="env-card-hy">囍</span>
-            <span className="env-card-names">{brideName} &amp; {groomName}</span>
             <span className="env-card-date">{dateShort}</span>
           </span>
           <span className="env-front">

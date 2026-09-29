@@ -4,15 +4,12 @@ import { useRef, useState, type FormEvent } from 'react';
 import type { Wish } from '@/config/wedding';
 import { SectionHead } from './Ornaments';
 
-type Props = { guest: string; guestFromLink: boolean; deadline?: string; initialWishes: Wish[] };
+type Props = { guest: string; guestFromLink: boolean; deadline?: string; initialWishes?: Wish[] };
 
 type Attend = 'Có' | 'Không' | 'Chưa chắc';
 const CHOICES: [Attend, string][] = [['Có', 'Mình sẽ đến'], ['Không', 'Tiếc quá, mình bận'], ['Chưa chắc', 'Chưa chắc']];
 
-export function Rsvp({ guest, guestFromLink, deadline, initialWishes }: Props) {
-  const [wishes, setWishes] = useState<(Wish & { isNew?: boolean; key: string })[]>(
-    initialWishes.map((w, i) => ({ ...w, key: `s${i}` })),
-  );
+export function Rsvp({ guest, guestFromLink, deadline }: Props) {
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<'name' | 'attend' | null>(null);
   const [sending, setSending] = useState(false);
@@ -54,15 +51,19 @@ export function Rsvp({ guest, guestFromLink, deadline, initialWishes }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      const data = (await res.json().catch(() => ({}))) as { error?: string; ok?: boolean; wish?: unknown };
       if (!res.ok) return fail(data.error ?? 'Chưa gửi được. Bấm Gửi xác nhận lần nữa sau ít phút.', null);
+
+      // Nếu có wish được tạo từ RSVP, dispatch event cho WishesBook cập nhật
+      if (data.wish && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('wedding:wish-created', { detail: data.wish }));
+      }
     } catch {
       return fail('Chưa gửi được vì mất kết nối mạng. Kiểm tra mạng rồi bấm Gửi xác nhận lần nữa.', null);
     } finally {
       setSending(false);
     }
 
-    if (payload.message) setWishes((w) => [{ name, message: payload.message, isNew: true, key: `n${Date.now()}` }, ...w]);
     setDoneText(
       attend === 'Có'
         ? `Cảm ơn ${name}! Chúng mình rất mong được gặp bạn trong ngày vui.`
@@ -131,29 +132,20 @@ export function Rsvp({ guest, guestFromLink, deadline, initialWishes }: Props) {
             ))}
           </div>
         </fieldset>
-        <div className="field-row">
-          <div className="field">
-            <label htmlFor="f-guests">Số người đi cùng</label>
-            <select className="input" id="f-guests" name="guests" defaultValue="1">
-              <option value="1">1 người</option>
-              <option value="2">2 người</option>
-              <option value="3">3 người</option>
-              <option value="4">4 người</option>
-              <option value="5+">5 người trở lên</option>
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="f-side">Bạn là khách của</label>
-            <select className="input" id="f-side" name="side" defaultValue="Nhà trai">
-              <option>Nhà trai</option>
-              <option>Nhà gái</option>
-              <option>Cả hai</option>
-            </select>
-          </div>
-        </div>
         <div className="field">
-          <label htmlFor="f-msg">Lời chúc gửi cô dâu chú rể</label>
-          <textarea className="input" id="f-msg" name="message" rows={3} maxLength={500} />
+          <label htmlFor="f-guests">Số người đi cùng</label>
+          <select className="input" id="f-guests" name="guests" defaultValue="1">
+            <option value="1">1 người</option>
+            <option value="2">2 người</option>
+            <option value="3">3 người</option>
+            <option value="4">4 người</option>
+            <option value="5+">5 người trở lên</option>
+          </select>
+        </div>
+        <input type="hidden" name="side" value="Nhà trai" />
+        <div className="field">
+          <label htmlFor="f-msg">Lời chúc gửi chú rể và cô dâu</label>
+          <textarea className="input" id="f-msg" name="message" rows={3} maxLength={300} placeholder="Gửi lời chúc hạnh phúc tới đôi uyên ương..." />
         </div>
         <p className="form-error" role="alert">{error}</p>
         <button className="btn btn-solid btn-block" type="submit" disabled={sending}>
@@ -168,18 +160,6 @@ export function Rsvp({ guest, guestFromLink, deadline, initialWishes }: Props) {
           <button className="btn" type="button" onClick={editAgain}>Sửa câu trả lời</button>
         </div>
       ) : null}
-
-      <div className="wishes" data-reveal="up">
-        <h3 className="wishes-title">Sổ lưu bút</h3>
-        <ul className="wish-list" aria-live="polite">
-          {wishes.map((w) => (
-            <li key={w.key} className={w.isNew ? 'wish is-new' : 'wish'}>
-              <p className="wish-name">{w.name}</p>
-              <p className="wish-msg">{w.message}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

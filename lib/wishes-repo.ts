@@ -69,8 +69,7 @@ class UpstashWishesRepo implements WishesRepo {
       }
     }
 
-    // Lấy dư 1 phần tử (limit + 1) để biết có trang tiếp theo không
-    const rawResults = await this.redis.zrange<string[]>(zsetKey, '-inf', maxScore, {
+    const rawResults = await this.redis.zrange<string[]>(zsetKey, maxScore, '-inf', {
       byScore: true,
       rev: true,
       offset: 0,

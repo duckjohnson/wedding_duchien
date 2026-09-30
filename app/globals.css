@@ -40,7 +40,7 @@
 }
 
 .font-allison {
-  font-family: var(--font-allison, 'Allison'), cursive;
+  font-family: var(--ff-allison, 'Allison'), cursive !important;
   font-size: 1.45em; /* Allison is visually smaller than Great Vibes */
   display: inline-block;
   transform: translateY(0.05em); /* Adjust baseline slightly */

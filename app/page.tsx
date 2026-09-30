@@ -1,5 +1,8 @@
+import type { Metadata } from 'next';
+import type { ResolvingMetadata } from 'next';
 import { wedding } from '@/config/wedding';
 import { buildView } from '@/lib/view';
+import { buildOgImageUrl } from '@/lib/og';
 import { Cover } from '@/components/Cover';
 import { MusicButton, Petals } from '@/components/Effects';
 import { Gallery } from '@/components/Gallery';
@@ -12,42 +15,77 @@ import { FloatingWishesWrapper } from '@/components/FloatingWishesWrapper';
 import { CalendarSection, Couple, Events, Hero, Letter, MapSection, Thanks } from '@/components/Sections';
 import { AutoScrollButton } from '@/components/AutoScrollButton';
 
+// Phiên bản OG – tăng lên để Zalo/Facebook bỏ cache ảnh cũ
+const OG_VERSION = '2';
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : null) ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
-import type { Metadata, ResolvingMetadata } from 'next';
-
-// Tên khách lấy từ link: /?khach=Anh%20Nam
+// Tên khách lấy từ link: /?khach=Anh%20Nam hoặc /?name=... hoặc /?guest=...
 function guestFrom(sp: Record<string, string | string[] | undefined>) {
-  const raw = sp.khach ?? sp.to;
+  const raw = sp.khach ?? sp.name ?? sp.guest ?? sp.to;
   const value = (Array.isArray(raw) ? raw[0] : raw)?.trim().slice(0, 60) ?? '';
   return { guest: value || wedding.defaultGuest, fromLink: Boolean(value), rawGuest: value };
 }
 
+// Lọc tham số theo dõi (utm_*, fbclid, zarsrc) khỏi URL canonical
+function cleanUrl(baseUrl: string, guestName: string): string {
+  const url = new URL(baseUrl);
+  if (guestName) url.searchParams.set('khach', guestName);
+  return url.toString();
+}
+
 export async function generateMetadata({ searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const sp = await searchParams;
-  const { guest, rawGuest } = guestFrom(sp);
-  
-  const ogUrl = new URL('/api/og', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-  if (rawGuest) ogUrl.searchParams.set('guest', rawGuest);
-  ogUrl.searchParams.set('v', '1');
+  const { rawGuest } = guestFrom(sp);
 
-  const title = rawGuest 
-    ? `Thân mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng` 
+  const title = rawGuest
+    ? `Thân mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng`
     : `Thiệp cưới Linh Anh & Thái Hùng`;
+
+  const description = wedding.meta.description;
+
+  // Cloudinary URL – trả trực tiếp JPEG, không qua server render
+  const ogImageUrl = buildOgImageUrl(rawGuest) + `?v=${OG_VERSION}`;
+  const canonicalUrl = cleanUrl(`${SITE_URL}/`, rawGuest);
 
   return {
     title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title,
-      description: wedding.meta.description,
       type: 'website',
+      locale: 'vi_VN',
+      siteName: `Thiệp cưới Linh Anh & Thái Hùng`,
+      url: canonicalUrl,
+      title,
+      description,
       images: [
         {
-          url: ogUrl.toString(),
+          url: ogImageUrl,
+          secureUrl: ogImageUrl,
           width: 1200,
           height: 630,
+          type: 'image/jpeg',
+          alt: rawGuest
+            ? `Thiệp mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng`
+            : `Thiệp cưới Linh Anh & Thái Hùng`,
         },
       ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
     },
   };
 }

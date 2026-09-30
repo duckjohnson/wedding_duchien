@@ -4,10 +4,18 @@ import { wedding } from '@/config/wedding';
 import { fontSans, fontScript, fontSerif, fontAllison } from './fonts';
 import './globals.css';
 
+// Chuỗi fallback: NEXT_PUBLIC_SITE_URL → VERCEL_PROJECT_PRODUCTION_URL → VERCEL_URL → localhost
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : null) ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
 const title = `Thiệp cưới ${wedding.bride.name} & ${wedding.groom.name}`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(SITE_URL),
   title,
   description: wedding.meta.description,
 };

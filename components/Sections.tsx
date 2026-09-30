@@ -223,7 +223,9 @@ export function Couple({ w, v }: P) {
 
               <figcaption>
                 <span className="portrait-role">{role}</span>
-                <span className="portrait-name">{p.name}</span>
+                <span className="portrait-name">
+                  {p.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+                </span>
               </figcaption>
             </motion.figure>
           );

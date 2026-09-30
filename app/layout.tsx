@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title,
   description: wedding.meta.description,
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {

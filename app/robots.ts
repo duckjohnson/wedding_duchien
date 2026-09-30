@@ -6,6 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
+        disallow: ['/admin', '/share'],
       },
       {
         userAgent: 'facebookexternalhit',
@@ -13,6 +14,10 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: 'Facebot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Zalo',
         allow: '/',
       },
     ],

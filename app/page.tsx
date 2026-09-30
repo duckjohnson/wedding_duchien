@@ -25,15 +25,22 @@ function guestFrom(sp: Record<string, string | string[] | undefined>) {
 
 export async function generateMetadata({ searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata> {
   const sp = await searchParams;
-  const { rawGuest } = guestFrom(sp);
+  const { guest, rawGuest } = guestFrom(sp);
   
-  if (!rawGuest) return {}; // Trả về mặc định của layout.tsx nếu không có tham số
-
   const ogUrl = new URL('/api/og', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-  ogUrl.searchParams.set('guest', rawGuest);
+  if (rawGuest) ogUrl.searchParams.set('guest', rawGuest);
+  ogUrl.searchParams.set('v', '1');
+
+  const title = rawGuest 
+    ? `Thân mời ${rawGuest} tới dự Lễ Cưới Linh Anh & Thái Hùng` 
+    : `Thiệp cưới Linh Anh & Thái Hùng`;
 
   return {
+    title,
     openGraph: {
+      title,
+      description: wedding.meta.description,
+      type: 'website',
       images: [
         {
           url: ogUrl.toString(),

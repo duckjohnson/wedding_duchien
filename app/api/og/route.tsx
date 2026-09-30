@@ -4,14 +4,11 @@ import { wedding } from '@/config/wedding';
 import fs from 'fs';
 import path from 'path';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs'; // Use nodejs to safely read local files with fs
 
-// We have to use fetch for Edge runtime instead of fs if the font is in public folder.
-// Since Next.js 14 edge runtime cannot use fs.readFileSync easily, we can use URL for fetch.
-// We'll read the font from the request URL origin.
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams, origin } = req.nextUrl;
+    const { searchParams } = req.nextUrl;
     
     // Fallback names
     const guestParam = searchParams.get('khach') ?? searchParams.get('to') ?? searchParams.get('guest');
@@ -23,11 +20,11 @@ export async function GET(req: NextRequest) {
     // Background image (Hero photo or OG image)
     const bgUrl = wedding.photos.hero || wedding.meta.ogImage || 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200';
 
-    // Fetch fonts from the public folder
-    const [greatVibesFont, cormorantFont] = await Promise.all([
-      fetch(new URL('/fonts/GreatVibes-Regular.ttf', origin)).then((res) => res.arrayBuffer()),
-      fetch(new URL('/fonts/CormorantGaramond-Regular.ttf', origin)).then((res) => res.arrayBuffer()),
-    ]);
+    // Read fonts from the public folder using fs
+    const greatVibesFont = fs.readFileSync(path.join(process.cwd(), 'public/fonts/GreatVibes-Regular.ttf'));
+    const cormorantFont = fs.readFileSync(path.join(process.cwd(), 'public/fonts/CormorantGaramond-Regular.ttf'));
+    const allisonFont = fs.readFileSync(path.join(process.cwd(), 'public/fonts/Allison-Regular.ttf')).buffer; // Wait, I didn't download Allison!
+
 
     return new ImageResponse(
       (
@@ -54,7 +51,7 @@ export async function GET(req: NextRequest) {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.45)', // Lớp phủ màu đen mờ
+              backgroundColor: 'rgba(94, 15, 21, 0.45)', // Lớp phủ tối màu đỏ đô mờ
             }}
           />
 
@@ -67,11 +64,10 @@ export async function GET(req: NextRequest) {
               justifyContent: 'center',
               zIndex: 1,
               textAlign: 'center',
-              border: '2px solid rgba(255, 255, 255, 0.4)',
+              border: '2px solid rgba(220, 180, 100, 0.6)', // Viền vàng đồng
               padding: '40px 80px',
               borderRadius: '20px',
               backgroundColor: 'rgba(0, 0, 0, 0.2)',
-              backdropFilter: 'blur(4px)',
             }}
           >
             <span
@@ -98,7 +94,13 @@ export async function GET(req: NextRequest) {
                 marginBottom: 40,
               }}
             >
-              {brideName} <span style={{ fontSize: 60, margin: '0 20px', fontFamily: '"Cormorant Garamond"' }}>&amp;</span> {groomName}
+              <div style={{ display: 'flex' }}>
+                {brideName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} style={{ fontFamily: '"Allison"', fontSize: 130, transform: 'translateY(10px)' }}>A</span>] : [part])}
+              </div>
+              <span style={{ fontSize: 60, margin: '0 20px', fontFamily: '"Cormorant Garamond"' }}>&amp;</span>
+              <div style={{ display: 'flex' }}>
+                {groomName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} style={{ fontFamily: '"Allison"', fontSize: 130, transform: 'translateY(10px)' }}>A</span>] : [part])}
+              </div>
             </div>
 
             {guestName ? (
@@ -125,7 +127,7 @@ export async function GET(req: NextRequest) {
                     fontSize: 52,
                     color: '#fff',
                     fontWeight: 600,
-                    borderBottom: '2px solid #fff',
+                    borderBottom: '2px solid rgba(220, 180, 100, 0.8)',
                     paddingBottom: 10,
                   }}
                 >
@@ -167,6 +169,12 @@ export async function GET(req: NextRequest) {
             weight: 400,
           },
           {
+            name: 'Allison',
+            data: allisonFont,
+            style: 'normal',
+            weight: 400,
+          },
+          {
             name: 'Cormorant Garamond',
             data: cormorantFont,
             style: 'normal',
@@ -179,6 +187,9 @@ export async function GET(req: NextRequest) {
             weight: 600,
           },
         ],
+        headers: {
+          'Cache-Control': 'public, max-age=86400, immutable',
+        },
       }
     );
   } catch (e: any) {

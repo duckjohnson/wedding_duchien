@@ -10,13 +10,6 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
   title,
   description: wedding.meta.description,
-  openGraph: {
-    title,
-    description: wedding.meta.description,
-    type: 'website',
-    locale: 'vi_VN',
-    ...(wedding.meta.ogImage ? { images: [{ url: wedding.meta.ogImage, width: 1200, height: 630 }] } : {}),
-  },
 };
 
 export const viewport: Viewport = {

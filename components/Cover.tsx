@@ -37,9 +37,9 @@ export function Cover({ groomName, brideName, dateShort, guest }: Props) {
       <div className="cover-inner">
         <p className="cover-kicker">Thiệp mời cưới</p>
         <p className="cover-names">
-          {brideName}
+          {brideName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
           <span className="amp">&amp;</span>
-          {groomName}
+          {groomName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
         </p>
         <button className="env" type="button" aria-label="Mở thiệp mời" onClick={open}>
           <span className="env-back" />

@@ -79,9 +79,13 @@ export function Hero({ w, v }: P) {
       {/* Lớp 3: Tên cô dâu chú rể và thông tin dịch chuyển nhanh hơn */}
       <motion.div style={{ y: reduced ? 0 : yText }}>
         <h1 className="hero-names" id="heroTitle" tabIndex={-1}>
-          <span className="hn" data-reveal="up" style={delay(0.6)}>{w.bride.name}</span>
+          <span className="hn" data-reveal="up" style={delay(0.6)}>
+            {w.bride.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+          </span>
           <span className="hn-amp" data-reveal="zoom" style={delay(0.8)}>&amp;</span>
-          <span className="hn" data-reveal="up" style={delay(0.95)}>{w.groom.name}</span>
+          <span className="hn" data-reveal="up" style={delay(0.95)}>
+            {w.groom.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+          </span>
         </h1>
         <div className="datelock" data-reveal="up" style={delay(1.15)}>
           <span className="dl-side">{v.weekday}</span>
@@ -207,7 +211,9 @@ export function Couple({ w, v }: P) {
                     <div className="flip-card-back-content">
                       <span className="flip-card-hy">囍</span>
                       <span className="flip-card-role">{role}</span>
-                      <h3 className="flip-card-name">{p.name}</h3>
+                      <h3 className="flip-card-name">
+                        {p.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+                      </h3>
                       <p className="flip-card-bio">{p.bio || defaultBio}</p>
                       <span className="flip-card-tip">Chạm để lật ảnh</span>
                     </div>

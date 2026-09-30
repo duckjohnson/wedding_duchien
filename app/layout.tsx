@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { CSSProperties, ReactNode } from 'react';
 import { wedding } from '@/config/wedding';
-import { fontSans, fontScript, fontSerif } from './fonts';
+import { fontSans, fontScript, fontSerif, fontAllison } from './fonts';
 import './globals.css';
 
 const title = `Thiệp cưới ${wedding.bride.name} & ${wedding.groom.name}`;
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   ) as CSSProperties;
 
   return (
-    <html lang="vi" className={`${fontScript.variable} ${fontSerif.variable} ${fontSans.variable}`} style={themeVars}>
+    <html lang="vi" className={`${fontScript.variable} ${fontSerif.variable} ${fontSans.variable} ${fontAllison.variable}`} style={themeVars}>
       <head>
         {/* Chỉ tải đúng một ký tự 囍 (vài KB) thay vì cả bộ font chữ Hán */}
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

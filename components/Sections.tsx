@@ -337,6 +337,7 @@ export function Thanks({ w, v }: P) {
               fill
               className="img-cover"
               sizes="(max-width: 480px) 100vw, 480px"
+              style={{ objectPosition: 'center 80%' }}
             />
           </motion.div>
         </div>

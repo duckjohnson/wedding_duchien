@@ -10,6 +10,7 @@ import { Rsvp } from '@/components/Rsvp';
 import { WishesBook } from '@/components/WishesBook';
 import { FloatingWishesWrapper } from '@/components/FloatingWishesWrapper';
 import { CalendarSection, Couple, Events, Hero, Letter, MapSection, Thanks } from '@/components/Sections';
+import { AutoScrollButton } from '@/components/AutoScrollButton';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -47,7 +48,10 @@ export default async function Page({ searchParams }: Props) {
         <Thanks w={wedding} v={v} />
       </main>
 
-      <MusicButton />
+      <div className="floating-controls">
+        <AutoScrollButton />
+        <MusicButton />
+      </div>
       <FloatingWishesWrapper />
       <Petals />
     </InviteProvider>

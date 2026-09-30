@@ -2541,13 +2541,116 @@ textarea.input {
 }
 
 /* =========================================================
-   14. NÚT NHẠC, TOAST, CÁNH HOA
+   14. NÚT NHẠC, TOAST, CÁNH HOA & TỰ ĐỘNG CUỘN
    ========================================================= */
-.music {
+
+html.is-auto-scrolling {
+  scroll-behavior: auto !important;
+}
+
+.floating-controls {
   position: fixed;
   z-index: 60;
   bottom: calc(16px + env(safe-area-inset-bottom));
   right: max(16px, calc((100vw - var(--col)) / 2 + 16px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.autoscroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.autoscroll-tooltip {
+  position: absolute;
+  right: 100%;
+  margin-right: 12px;
+  background: var(--son);
+  color: var(--nude);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(60, 8, 12, 0.2);
+  border: 1px solid var(--kim);
+  animation: tooltip-fade 0.4s var(--ease-out);
+}
+@keyframes tooltip-fade {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.autoscroll-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  border: 1px solid var(--kim);
+  background: var(--son);
+  color: var(--kim-light);
+  box-shadow: 0 10px 24px rgba(60, 8, 12, .35);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.autoscroll-btn:hover {
+  transform: scale(1.05);
+}
+
+.autoscroll-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.autoscroll-ring circle {
+  stroke-width: 1.5;
+}
+
+.autoscroll-ring .bg-ring {
+  stroke: rgba(234, 182, 118, 0.2);
+}
+
+.autoscroll-ring .fg-ring {
+  stroke: var(--kim);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.autoscroll-icon {
+  width: 22px;
+  height: 22px;
+  z-index: 1;
+}
+
+.autoscroll-speed {
+  background: var(--son);
+  color: var(--kim);
+  border: 1px solid var(--kim);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(60, 8, 12, 0.2);
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.autoscroll-speed:hover {
+  background: var(--kim);
+  color: var(--son);
+}
+
+.music {
   width: 48px;
   height: 48px;
   border-radius: 50%;

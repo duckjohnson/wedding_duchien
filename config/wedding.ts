@@ -152,7 +152,7 @@ export const wedding: WeddingConfig = {
   ],
 
   meta: {
-    description: 'Trân trọng kính mời bạn đến dự lễ thành hôn của chúng mình.',
+    description: 'Chủ nhật, 18.10.2026 (Tức ngày mùng 9 tháng 9 năm Bính Ngọ) – Rất hân hạnh được đón tiếp!',
     ogImage: 'https://res.cloudinary.com/txyieslq/image/upload/c_fill,g_face,w_1200,h_630,f_jpg,q_auto/ZHUN4223',
   },
 

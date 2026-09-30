@@ -32,7 +32,7 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
   ogUrl.searchParams.set('v', '1');
 
   const title = rawGuest 
-    ? `Thân mời ${rawGuest} tới dự Lễ Cưới Linh Anh & Thái Hùng` 
+    ? `Thân mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng` 
     : `Thiệp cưới Linh Anh & Thái Hùng`;
 
   return {

@@ -14,11 +14,35 @@ import { AutoScrollButton } from '@/components/AutoScrollButton';
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
+import type { Metadata, ResolvingMetadata } from 'next';
+
 // Tên khách lấy từ link: /?khach=Anh%20Nam
 function guestFrom(sp: Record<string, string | string[] | undefined>) {
   const raw = sp.khach ?? sp.to;
   const value = (Array.isArray(raw) ? raw[0] : raw)?.trim().slice(0, 60) ?? '';
-  return { guest: value || wedding.defaultGuest, fromLink: Boolean(value) };
+  return { guest: value || wedding.defaultGuest, fromLink: Boolean(value), rawGuest: value };
+}
+
+export async function generateMetadata({ searchParams }: Props, parent: ResolvingMetadata): Promise<Metadata> {
+  const sp = await searchParams;
+  const { rawGuest } = guestFrom(sp);
+  
+  if (!rawGuest) return {}; // Trả về mặc định của layout.tsx nếu không có tham số
+
+  const ogUrl = new URL('/api/og', process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+  ogUrl.searchParams.set('guest', rawGuest);
+
+  return {
+    openGraph: {
+      images: [
+        {
+          url: ogUrl.toString(),
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+  };
 }
 
 export default async function Page({ searchParams }: Props) {

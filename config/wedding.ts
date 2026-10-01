@@ -74,7 +74,7 @@ export const wedding: WeddingConfig = {
   },
   families: {
     groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Thôn Nham Lang, Xã Tiên La, Tỉnh Hưng Yên' },
-    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng' },
+    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng' },
   },
 
   events: [
@@ -83,7 +83,7 @@ export const wedding: WeddingConfig = {
       date: '2026-10-17',
       time: '17:00',
       place: 'Tư gia nhà gái',
-      address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
+      address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng',
     },
     {
       title: 'Lễ vu quy',
@@ -91,7 +91,7 @@ export const wedding: WeddingConfig = {
       time: '10:00',
       main: true,
       place: 'Tư gia nhà gái',
-      address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng',
+      address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng',
     },
   ],
   map: {

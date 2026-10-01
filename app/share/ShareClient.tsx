@@ -37,14 +37,14 @@ export default function ShareClient() {
   return (
     <div style={{ maxWidth: 600, margin: '0 auto', padding: 20, fontFamily: 'sans-serif' }}>
       <h1 style={{ fontSize: 24, marginBottom: 20, textAlign: 'center' }}>Công cụ tạo link cho Dâu Rể</h1>
-      
+
       <div style={{ marginBottom: 20 }}>
         <label style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>Tên khách mời:</label>
-        <input 
-          type="text" 
+        <input
+          type="text"
           value={guest}
           onChange={(e) => setGuest(e.target.value)}
-          placeholder="Nhập tên khách... (VD: Anh Đức)"
+          placeholder="Nhập tên khách... (VD: Anh ...)"
           style={{ width: '100%', padding: '12px', fontSize: 16, borderRadius: 8, border: '1px solid #ccc' }}
         />
       </div>
@@ -54,7 +54,7 @@ export default function ShareClient() {
         <div style={{ padding: 12, backgroundColor: '#f5f5f5', borderRadius: 8, wordBreak: 'break-all', marginBottom: 12, color: '#333' }}>
           {shareUrl}
         </div>
-        
+
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button onClick={copy} style={{ padding: '10px 16px', backgroundColor: copied ? '#4CAF50' : '#0070f3', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 500 }}>
             {copied ? 'Đã copy!' : 'Copy link'}

@@ -73,7 +73,7 @@ export const wedding: WeddingConfig = {
     photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4379',
   },
   families: {
-    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Thôn Nham Lang, xã Tiên La, tỉnh Hưng Yên' },
+    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Thôn Nham Lang, Xã Tiên La, Tỉnh Hưng Yên' },
     bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Số 64 Tân Kim, phường Lê Thanh Nghị, thành phố Hải Phòng' },
   },
 

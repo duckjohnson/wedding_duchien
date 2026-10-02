@@ -102,18 +102,13 @@ export function useAutoScroll() {
         stateRef.current.lastInteractionTime = performance.now();
       }
     };
-    const onScroll = () => {
-      if (!stateRef.current.isProgrammaticScroll) {
-        onInteract();
-      }
-    };
+
 
     window.addEventListener('touchstart', onInteract, { passive: true });
     window.addEventListener('touchmove', onInteract, { passive: true });
     window.addEventListener('wheel', onInteract, { passive: true });
     window.addEventListener('keydown', onInteract, { passive: true });
     window.addEventListener('pointerdown', onInteract, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('focusin', onFocusIn);
     document.addEventListener('focusout', onFocusOut);
 
@@ -123,7 +118,6 @@ export function useAutoScroll() {
       window.removeEventListener('wheel', onInteract);
       window.removeEventListener('keydown', onInteract);
       window.removeEventListener('pointerdown', onInteract);
-      window.removeEventListener('scroll', onScroll);
       document.removeEventListener('focusin', onFocusIn);
       document.removeEventListener('focusout', onFocusOut);
     };

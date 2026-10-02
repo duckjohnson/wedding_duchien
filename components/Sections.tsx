@@ -33,7 +33,7 @@ export function Hero({ w, v }: P) {
 
   return (
     <section className="hero" id="top" ref={heroRef}>
-      <p className="hero-kicker" data-reveal="up">Lễ thành hôn</p>
+      <p className="hero-kicker" data-reveal="up">Lễ vu quy</p>
 
       {/* Lớp 2: Khung viền ảnh + 3D Tilt theo chuột trên desktop và gyroscope trên mobile */}
       <motion.div

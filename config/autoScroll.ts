@@ -1,5 +1,5 @@
 export const autoScrollConfig = {
-  startDelay: 2500, // 2.5s sau khi mở phong bì thì bắt đầu
+  startDelay: 0, // Bắt đầu cuộn ngay lập tức sau khi mở thiệp
   speeds: [0.5, 0.8, 1.4], // Chậm, Vừa, Nhanh (pixels per frame)
   defaultSpeedIndex: 1,
   resumeDelay: 5000, // 5s không tương tác thì tiếp tục

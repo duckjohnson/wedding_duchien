@@ -134,11 +134,10 @@ export const wedding: WeddingConfig = {
     accounts: [
       {
         owner: 'Mừng cưới',
-        bank: 'PGBank',
-        bankCode: 'PGB',
-        accountNo: '2662625010412',
-        accountName: 'PHAM THAI HUNG',
-        qrImage: '/photos/qr-pgbank.png',
+        bank: 'Techcombank',
+        bankCode: 'TCB',
+        accountNo: '9944457318',
+        accountName: 'HOANG SY KHOA',
       },
     ],
   },

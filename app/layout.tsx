@@ -13,6 +13,7 @@ const SITE_URL =
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
 const title = `Thiệp cưới ${wedding.bride.name} & ${wedding.groom.name}`;
+const ogImage = wedding.meta.ogImage;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,6 +22,21 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'vi_VN',
+    url: '/',
+    siteName: title,
+    title,
+    description: wedding.meta.description,
+    images: ogImage ? [{ url: ogImage, alt: title }] : undefined,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description: wedding.meta.description,
+    images: ogImage ? [ogImage] : undefined,
   },
 };
 

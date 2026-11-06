@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
             fontSize: 60,
           }}
         >
-          Linh Anh &amp; Thái Hùng
+          Vũ Hiền &amp; Hữu Đức
         </div>
       ),
       {

@@ -12,7 +12,13 @@ const SITE_URL =
     : null) ??
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
-const title = `Thiệp cưới ${wedding.bride.name} & ${wedding.groom.name}`;
+// Nhà trai: "Hữu Đức & Vũ Hiền" – Nhà gái: "Vũ Hiền & Hữu Đức"
+const [first, second] =
+  wedding.side === 'bride'
+    ? [wedding.bride.name, wedding.groom.name]
+    : [wedding.groom.name, wedding.bride.name];
+
+const title = `Thiệp cưới ${first} & ${second}`;
 const ogImage = wedding.meta.ogImage;
 
 export const metadata: Metadata = {
@@ -48,7 +54,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // Màu ghi đè từ config/wedding.ts > theme
+  // Màu ghi đè từ config > theme
   const themeVars = Object.fromEntries(
     Object.entries(wedding.theme).filter(([, v]) => v).map(([k, v]) => [`--${k}`, v]),
   ) as CSSProperties;

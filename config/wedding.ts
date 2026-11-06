@@ -81,14 +81,14 @@ export const wedding: WeddingConfig = {
     {
       title: 'Bữa cơm thân mật',
       date: '2026-11-21',
-      time: '17:00',
+      time: '16:30',
       place: 'Tư gia nhà Trai',
       address: 'nhà văn hoá Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng',
     },
     {
       title: 'Lễ Thành Hôn',
       date: '2026-11-22',
-      time: '08:00',
+      time: '07:30',
       main: true,
       place: 'Tư gia nhà trai',
       address: 'nhà văn hoá Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng',

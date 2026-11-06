@@ -49,7 +49,7 @@ Sổ lưu bút được kết nối với cơ sở dữ liệu Upstash Redis (th
 ## Trang Quản Trị Sổ Lưu Bút (`/admin/wishes`)
 
 - Truy cập đường dẫn: `https://ten-mien-cua-ban.com/admin/wishes`
-- Nhập mật khẩu đã đặt trong biến môi trường `ADMIN_PASSWORD` (mặc định nếu chưa đặt: `linhanhthaihung2026`).
+- Nhập mật khẩu đã đặt trong biến môi trường `ADMIN_PASSWORD` (bắt buộc phải đặt, không có mật khẩu mặc định).
 - Chức năng:
   - Xem tất cả lời chúc (kể cả lời chúc đã bị ẩn).
   - Nút **Ẩn / Hiện lời chúc** ngay lập tức.

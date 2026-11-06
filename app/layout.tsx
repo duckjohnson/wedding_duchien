@@ -19,7 +19,7 @@ const [first, second] =
     : [wedding.groom.name, wedding.bride.name];
 
 const title = `Thiệp cưới ${first} & ${second}`;
-const ogImage = wedding.meta.ogImage;
+const ogImage = '/photos/og.jpg'; // FIX CỨNG: cắt từ a3.jpeg, 1200×630
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

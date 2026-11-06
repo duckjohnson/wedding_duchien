@@ -14,7 +14,10 @@ import { CalendarSection, Couple, Events, Hero, Letter, MapSection, Thanks } fro
 import { AutoScrollButton } from '@/components/AutoScrollButton';
 
 // Phiên bản OG – tăng lên (3, 4, ...) mỗi khi đổi ảnh để Zalo/Facebook bỏ cache ảnh cũ
-const OG_VERSION = '4';
+const OG_VERSION = '5';
+
+// FIX CỨNG: ảnh xem trước luôn là file này (cắt từ a3.jpeg), không phụ thuộc config
+const OG_IMAGE_PATH = '/photos/og.jpg';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -40,17 +43,17 @@ function guestFrom(sp: Record<string, string | string[] | undefined>) {
 }
 
 // Lọc tham số theo dõi (utm_*, fbclid, zarsrc) khỏi URL canonical
+// Thêm v=OG_VERSION để Zalo/Facebook coi đây là URL mới và quét lại ảnh (bỏ cache cũ)
 function cleanUrl(baseUrl: string, guestName: string): string {
   const url = new URL(baseUrl);
   if (guestName) url.searchParams.set('khach', guestName);
+  url.searchParams.set('v', OG_VERSION);
   return url.toString();
 }
 
-// Ảnh xem trước: lấy từ config (meta.ogImage), ví dụ '/photos/og.jpg' (nên 1200×630)
-function ogImageUrl(): string | null {
-  const path = wedding.meta.ogImage;
-  if (!path) return null;
-  const abs = new URL(path, SITE_URL);
+// Ảnh xem trước: cố định, 1200×630
+function ogImageUrl(): string {
+  const abs = new URL(OG_IMAGE_PATH, SITE_URL);
   abs.searchParams.set('v', OG_VERSION);
   return abs.toString();
 }
@@ -80,23 +83,24 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       url: canonicalUrl,
       title,
       description,
-      images: image
-        ? [
-            {
-              url: image,
-              secureUrl: image,
-              alt: rawGuest
-                ? `Thiệp mời ${rawGuest} đến dự lễ cưới ${COUPLE}`
-                : `Thiệp cưới ${COUPLE}`,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: image,
+          secureUrl: image,
+          width: 1200,
+          height: 630,
+          type: 'image/jpeg',
+          alt: rawGuest
+            ? `Thiệp mời ${rawGuest} đến dự lễ cưới ${COUPLE}`
+            : `Thiệp cưới ${COUPLE}`,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: image ? [image] : undefined,
+      images: [image],
     },
   };
 }

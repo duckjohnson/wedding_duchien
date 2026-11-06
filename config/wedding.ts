@@ -39,6 +39,7 @@ export type GiftAccount = {
 export type Wish = { name: string; message: string };
 
 export type WeddingConfig = {
+  side: 'groom' | 'bride';
   groom: Person;
   bride: Person;
   families: { groom: Family; bride: Family };
@@ -58,6 +59,7 @@ export type WeddingConfig = {
 };
 
 export const wedding: WeddingConfig = {
+  side: 'groom',
   groom: {
     name: 'Hữu Đức',
     fullName: 'Hữu Đức',

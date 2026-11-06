@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Dữ liệu không hợp lệ.' }, { status: 400 });
   }
 
-  const expected = process.env.ADMIN_PASSWORD || 'linhanhthaihung2026';
+  const expected = process.env.ADMIN_PASSWORD || 'Congnguyenhd97@';
   if (body.password !== expected) {
     return NextResponse.json({ error: 'Mật khẩu quản trị không chính xác.' }, { status: 401 });
   }

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 const COOKIE_NAME = 'admin_session';
 
 function getExpectedToken(): string {
-  const secret = process.env.ADMIN_PASSWORD || 'linhanhthaihung2026';
+  const secret = process.env.ADMIN_PASSWORD || 'Congnguyenhd97@';
   return crypto.createHash('sha256').update(`wedding_admin_${secret}`).digest('hex');
 }
 

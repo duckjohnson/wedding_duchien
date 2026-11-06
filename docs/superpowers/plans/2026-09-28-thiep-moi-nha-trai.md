@@ -14,8 +14,8 @@
 
 1. **Nghi lễ chính:** Đổi từ "Lễ Vu Quy" (nhà gái tiễn con gái về nhà chồng) thành "Lễ Thành Hôn" hoặc "Lễ Tân Hôn" (nhà trai đón dâu và mở tiệc đãi khách).
 2. **Thứ tự Tên Cô Dâu & Chú Rể:**
-   - Nhà gái: Cô dâu đứng trước (`Linh Anh & Thái Hùng`).
-   - Nhà trai: Chú rể đứng trước (`Thái Hùng & Linh Anh`) trên bì thư, Hero banner, tiêu đề cặp đôi, lời cảm ơn và metadata SEO.
+   - Nhà gái: Cô dâu đứng trước (`Vũ Hiền & Hữu Đức`).
+   - Nhà trai: Chú rể đứng trước (`Hữu Đức & Vũ Hiền`) trên bì thư, Hero banner, tiêu đề cặp đôi, lời cảm ơn và metadata SEO.
 3. **Thứ tự Đại diện Gia Đình (Họ Hàng):**
    - Nhà gái: Nhà gái đặt bên trái (vị trí ưu tiên đầu tiên), Nhà trai bên phải.
    - Nhà trai: Nhà trai đặt bên trái (vị trí ưu tiên đầu tiên), Nhà gái bên phải.

@@ -47,7 +47,7 @@ export function buildOgImageUrl(guestName?: string | null): string {
     'c_fill,g_faces,w_1200,h_630',
     // 2. Lớp phủ tối màu đỏ đô để chữ nổi lên
     'e_colorize:60,co_rgb:3c080c',
-    // 3. Dòng chữ "Trân trọng kính mời đến dự lễ cưới Linh Anh & Thái Hùng"
+    // 3. Dòng chữ "Trân trọng kính mời đến dự lễ cưới Vũ Hiền & Hữu Đức"
     [
       `l_text:Roboto_32_italic:Tr%C3%A2n%20tr%E1%BB%8Dng%20k%C3%ADnh%20m%E1%BB%9Di%20%C4%91%E1%BA%BFn%20d%E1%BB%B1%20l%E1%BB%85%20c%C6%B0%E1%BB%9Bi%20Linh%20Anh%20%26%20Th%C3%A1i%20H%C3%B9ng`,
       'co_rgb:F5E6D3',

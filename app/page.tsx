@@ -46,8 +46,8 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
   const { rawGuest } = guestFrom(sp);
 
   const title = rawGuest
-    ? `Thân mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng`
-    : `Thiệp cưới Linh Anh & Thái Hùng`;
+    ? `Thân mời ${rawGuest} đến dự lễ cưới Vũ Hiền & Hữu Đức`
+    : `Thiệp cưới Vũ Hiền & Hữu Đức`;
 
   const description = wedding.meta.description;
 
@@ -64,7 +64,7 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
     openGraph: {
       type: 'website',
       locale: 'vi_VN',
-      siteName: `Thiệp cưới Linh Anh & Thái Hùng`,
+      siteName: `Thiệp cưới Vũ Hiền & Hữu Đức`,
       url: canonicalUrl,
       title,
       description,
@@ -76,8 +76,8 @@ export async function generateMetadata({ searchParams }: Props, parent: Resolvin
           height: 630,
           type: 'image/jpeg',
           alt: rawGuest
-            ? `Thiệp mời ${rawGuest} đến dự lễ cưới Linh Anh & Thái Hùng`
-            : `Thiệp cưới Linh Anh & Thái Hùng`,
+            ? `Thiệp mời ${rawGuest} đến dự lễ cưới Vũ Hiền & Hữu Đức`
+            : `Thiệp cưới Vũ Hiền & Hữu Đức`,
         },
       ],
     },

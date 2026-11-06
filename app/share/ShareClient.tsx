@@ -26,7 +26,7 @@ export default function ShareClient() {
   const nativeShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `Thân mời ${guest} đến dự lễ cưới Linh Anh & Thái Hùng`,
+        title: `Thân mời ${guest} đến dự lễ cưới Vũ Hiền & Hữu Đức`,
         url: shareUrl,
       });
     }

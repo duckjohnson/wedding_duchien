@@ -59,43 +59,43 @@ export type WeddingConfig = {
 
 export const wedding: WeddingConfig = {
   groom: {
-    name: 'Thái Hùng',
-    fullName: 'Thái Hùng',
+    name: 'Hữu Đức',
+    fullName: 'Hữu Đức',
     role: '',
     bio: '',
-    photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN3877_1',
+    photo: '/photos/a1.jpeg',
   },
   bride: {
-    name: 'Linh Anh',
-    fullName: 'Linh Anh',
+    name: 'Vũ Hiền',
+    fullName: 'Vũ Hiền',
     role: '',
     bio: '',
-    photo: 'https://res.cloudinary.com/txyieslq/image/upload/f_auto,q_auto/ZHUN4379',
+    photo: '/photos/h1.jpeg',
   },
   families: {
-    groom: { father: 'Ông Phạm Minh Khoa', mother: 'Bà Nguyễn Thị Ân', address: 'Thôn Nham Lang, Xã Tiên La, Tỉnh Hưng Yên' },
-    bride: { father: 'Ông Hoàng Sỹ Khoa', mother: 'Bà Nguyễn Thị Quế', address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng' },
+    groom: { father: 'Ông Nguyễn Hữu Học', mother: 'Bà Nguyễn Thị Hiền', address: 'Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng' },
+    bride: { father: 'Ông Vũ Văn Nhung', mother: 'Bà Đặng Thị Mùi', address: 'Thôn Quan Sơn, Xã Thái Tân, Thành Phố Hải Phòng' },
   },
 
   events: [
     {
       title: 'Bữa cơm thân mật',
-      date: '2026-10-17',
+      date: '2026-11-21',
       time: '17:00',
-      place: 'Tư gia nhà gái',
-      address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng',
+      place: 'Tư gia nhà Trai',
+      address: 'nhà văn hoá Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng',
     },
     {
-      title: 'Lễ vu quy',
-      date: '2026-10-18',
-      time: '10:00',
+      title: 'Lễ Thành Hôn',
+      date: '2026-11-22',
+      time: '08:00',
       main: true,
-      place: 'Tư gia nhà gái',
-      address: 'Số 64 Tân Kim, Phường Lê Thanh Nghị, Thành Phố Hải Phòng',
+      place: 'Tư gia nhà trai',
+      address: 'nhà văn hoá Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng',
     },
   ],
   map: {
-    query: 'Số 64 Tân Kim, Lê Thanh Nghị, Hải Phòng',
+    query: 'nhà văn hoá Thôn An Điền Kim, Xã An Phú, Thành Phố Hải Phòng',
     embedUrl: '', // hoặc dán src của iframe "Nhúng bản đồ" từ Google Maps
   },
 
@@ -106,27 +106,24 @@ export const wedding: WeddingConfig = {
     'Cảm ơn bạn đã dành thời gian đọc thiệp và chung vui cùng chúng mình. Hẹn gặp bạn trong ngày vui!',
 
   photos: {
-    hero: 'https://res.cloudinary.com/txyieslq/image/upload/v1790347007/ZHUN4427.jpg',
-    thanks: 'https://res.cloudinary.com/txyieslq/image/upload/v1790347916/ZHUN3301_1.jpg',
+    hero: '/photos/hero.jpeg',
+    thanks: '/photos/a5.jpeg',
     gallery: [
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346962/ZHUN3523.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346972/ZHUN3632.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346978/ZHUN3690.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346990/ZHUN3739.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/c_fill,g_face,ar_4:3/v1790346993/ZHUN4242.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346996/ZHUN3846.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790346998/ZHUN4246.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790347000/ZHUN4251.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790347007/ZHUN4427.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790347010/ZHUN4461.jpg',
-      'https://res.cloudinary.com/txyieslq/image/upload/v1790347015/ZHUN4484.jpg',
+      '/photos/a1.jpeg',
+      '/photos/a2.jpeg',
+      '/photos/a3.jpeg',
+      '/photos/a4.jpeg',
+      '/photos/a6.jpeg',
+      '/photos/a7.jpeg',
+      '/photos/a8.jpeg',
+      '/photos/a9.jpeg',
     ],
   },
 
   cover: { enabled: true },
 
   // Phản hồi được gửi tới /api/rsvp; muốn lưu vào Google Sheet thì đặt RSVP_WEBHOOK_URL (xem README)
-  rsvp: { enabled: true, deadline: '10.10.2026' },
+  rsvp: { enabled: true, deadline: '10.12.2026' },
 
   gift: {
     enabled: true,
@@ -134,10 +131,10 @@ export const wedding: WeddingConfig = {
     accounts: [
       {
         owner: 'Mừng cưới',
-        bank: 'Techcombank',
-        bankCode: 'TCB',
-        accountNo: '9944457318',
-        accountName: 'HOANG SY KHOA',
+        bank: 'MB Bank',
+        bankCode: 'MB',
+        accountNo: '0008693989999',
+        accountName: 'NGUYỄN HỮU ĐỨC',
       },
     ],
   },
@@ -151,8 +148,8 @@ export const wedding: WeddingConfig = {
   ],
 
   meta: {
-    description: 'Chủ nhật, 18.10.2026 (Tức ngày mùng 9 tháng 9 năm Bính Ngọ) – Rất hân hạnh được đón tiếp!',
-    ogImage: 'https://res.cloudinary.com/txyieslq/image/upload/c_fill,g_face,w_1200,h_630,f_jpg,q_auto/ZHUN4223',
+    description: 'Chủ nhật, 22.11.2026 (Tức ngày 14 tháng 10 năm Bính Ngọ) – Rất hân hạnh được đón tiếp!',
+    ogImage: '/photos/a5.jpeg',
   },
 
   // Ghi đè màu, ví dụ: { son: '#1F3A5F', kim: '#B89B5E' }

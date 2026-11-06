@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type TouchEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Tilt from 'react-parallax-tilt';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectCoverflow, Navigation, Pagination } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -14,23 +13,15 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { albumPhotos, getAlbumImageUrl, getFullImageUrl, type AlbumPhoto } from '@/data/album';
 import type { GalleryItem } from '@/lib/view';
 import { prefersReducedMotion } from './InviteProvider';
 import { SectionHead } from './Ornaments';
-
-const SHAPES = ['t', 'n', 'n', 'w', 'n', 't', 'n', 'w', 't', 't', 'w'] as const;
-const SIZES = {
-  t: '(max-width: 480px) 50vw, 240px',
-  n: '(max-width: 480px) 50vw, 240px',
-  w: '(max-width: 480px) 100vw, 480px',
-};
 
 type Props = {
   items?: GalleryItem[];
 };
 
-export function Gallery({ items: _items }: Props) {
+export function Gallery({ items = [] }: Props) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [reduced, setReduced] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
@@ -41,7 +32,8 @@ export function Gallery({ items: _items }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  const photos: AlbumPhoto[] = albumPhotos;
+  // Ảnh lấy từ config/wedding.ts -> photos.gallery (qua buildView)
+  const photos = items;
   const total = photos.length;
 
   useEffect(() => {
@@ -53,9 +45,9 @@ export function Gallery({ items: _items }: Props) {
     const handleVisibility = () => {
       if (!swiperRef.current || reduced) return;
       if (document.hidden) {
-        swiperRef.current.autoplay.stop();
+        swiperRef.current.autoplay?.stop();
       } else {
-        swiperRef.current.autoplay.start();
+        swiperRef.current.autoplay?.start();
       }
     };
     document.addEventListener('visibilitychange', handleVisibility);
@@ -69,9 +61,9 @@ export function Gallery({ items: _items }: Props) {
       ([entry]) => {
         if (!swiperRef.current || reduced) return;
         if (entry.isIntersecting) {
-          swiperRef.current.autoplay.start();
+          swiperRef.current.autoplay?.start();
         } else {
-          swiperRef.current.autoplay.stop();
+          swiperRef.current.autoplay?.stop();
         }
       },
       { threshold: 0.15 },
@@ -80,13 +72,20 @@ export function Gallery({ items: _items }: Props) {
     return () => observer.disconnect();
   }, [reduced]);
 
+  // Dọn timer khi unmount
+  useEffect(() => {
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    };
+  }, []);
+
   // Hẹn giờ chạy lại autoplay sau 3s kể từ khi người dùng thả tay
   const handleTouchEndOrInteraction = () => {
     if (!swiperRef.current || reduced) return;
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
     resumeTimer.current = setTimeout(() => {
       if (swiperRef.current && !reduced) {
-        swiperRef.current.autoplay.start();
+        swiperRef.current.autoplay?.start();
       }
     }, 3000);
   };
@@ -101,7 +100,7 @@ export function Gallery({ items: _items }: Props) {
 
   const navLightbox = useCallback(
     (dir: number) => {
-      setLightboxIndex((prev) => (prev === null ? null : (prev + dir + total) % total));
+      setLightboxIndex((prev) => (prev === null || total === 0 ? null : (prev + dir + total) % total));
     },
     [total],
   );
@@ -117,7 +116,7 @@ export function Gallery({ items: _items }: Props) {
   }, [lightboxIndex]);
 
   // Phím tắt bàn phím
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     if (lightboxIndex !== null) {
       if (e.key === 'Escape') closeLightbox();
       else if (e.key === 'ArrowLeft') navLightbox(-1);
@@ -141,6 +140,8 @@ export function Gallery({ items: _items }: Props) {
 
   const activePhoto = lightboxIndex !== null ? photos[lightboxIndex] : null;
 
+  if (total === 0) return null;
+
   return (
     <section className="sec album" aria-labelledby="t-album" onKeyDown={handleKeyDown}>
       <SectionHead id="t-album" title="Album ảnh cưới" sub="Chạm vào ảnh để xem lớn" />
@@ -156,7 +157,7 @@ export function Gallery({ items: _items }: Props) {
           grabCursor={true}
           centeredSlides={true}
           slidesPerView="auto"
-          loop={true}
+          loop={total > 3}
           speed={1100}
           slideToClickedSlide={true}
           coverflowEffect={{
@@ -190,39 +191,29 @@ export function Gallery({ items: _items }: Props) {
           }}
           className="album-swiper"
         >
-          {photos.map((photo, i) => {
-            const carouselUrl = getAlbumImageUrl(photo.publicId, {
-              width: 900,
-              aspectRatio: '3:4',
-              crop: 'c_fill',
-              gravity: 'g_faces',
-            });
-
-            return (
-              <SwiperSlide
-                key={photo.id}
-                onClick={() => {
-                  if (swiperRef.current) {
-                    // Nếu là slide ở giữa (active): mở lightbox; nếu ở hai bên: swiper tự trượt về giữa
-                    if (swiperRef.current.realIndex === i) {
-                      openLightbox(i);
-                    }
-                  }
-                }}
-              >
-                <Image
-                  src={carouselUrl}
-                  alt=""
-                  fill
-                  sizes="(max-width: 480px) 68vw, (max-width: 1024px) 300px, 320px"
-                  priority={i === 0}
-                />
-              </SwiperSlide>
-            );
-          })}
+          {photos.map((photo, i) => (
+            <SwiperSlide
+              key={`${photo.src}-${i}`}
+              onClick={() => {
+                // Slide ở giữa (active): mở lightbox; slide hai bên: swiper tự trượt về giữa
+                if (swiperRef.current && swiperRef.current.realIndex === i) {
+                  openLightbox(i);
+                }
+              }}
+            >
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(max-width: 480px) 68vw, (max-width: 1024px) 300px, 320px"
+                style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                priority={i === 0}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
 
-        {/* Nút điều hướng desktop (ẩn trên mobile, desktop hiện mờ khi hover) */}
+        {/* Nút điều hướng desktop */}
         <button
           type="button"
           className="album-swiper-nav-btn album-swiper-prev"
@@ -243,52 +234,42 @@ export function Gallery({ items: _items }: Props) {
           </svg>
         </button>
 
-        {/* Dãy dots nhỏ tinh tế bên dưới */}
+        {/* Dãy dots bên dưới */}
         <div className="album-swiper-pagination" />
       </div>
 
-      {/* ===================== 2. LƯỚI ẢNH 3D TILT ===================== */}
+      {/* ===================== 2. LƯỚI ẢNH ===================== */}
       <h3 className="gallery-grid-title">Khoảnh khắc trọn vẹn</h3>
 
       <div className="gallery">
-        {photos.map((photo, i) => {
-          const gridUrl = getAlbumImageUrl(photo.publicId, {
-            width: 800,
-            crop: 'c_scale',
-          });
-
-          return (
-            <div
-              key={photo.id}
-              className="g-item masonry-item"
+        {photos.map((photo, i) => (
+          <div key={`${photo.src}-${i}`} className="g-item masonry-item">
+            <button
+              type="button"
+              style={{
+                width: '100%',
+                position: 'relative',
+                background: 'none',
+                border: 0,
+                padding: 0,
+                cursor: 'zoom-in',
+                display: 'block',
+              }}
+              aria-label="Xem ảnh cưới phóng to"
+              onClick={() => openLightbox(i)}
             >
-              <button
-                type="button"
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  background: 'none',
-                  border: 0,
-                  padding: 0,
-                  cursor: 'zoom-in',
-                  display: 'block',
-                }}
-                aria-label="Xem ảnh cưới phóng to"
-                onClick={() => openLightbox(i)}
-              >
-                <img
-                  src={gridUrl}
-                  alt=""
-                  loading="lazy"
-                  style={{ display: 'block', width: '100%', height: 'auto' }}
-                />
-              </button>
-            </div>
-          );
-        })}
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                loading="lazy"
+                style={{ display: 'block', width: '100%', height: 'auto' }}
+              />
+            </button>
+          </div>
+        ))}
       </div>
 
-      {/* ===================== 3. LIGHTBOX ANIMATION ===================== */}
+      {/* ===================== 3. LIGHTBOX ===================== */}
       <AnimatePresence>
         {activePhoto && lightboxIndex !== null && (
           <motion.div
@@ -313,10 +294,10 @@ export function Gallery({ items: _items }: Props) {
               style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <Image
-                key={activePhoto.id}
+                key={`${activePhoto.src}-${lightboxIndex}`}
                 className="lb-img"
-                src={getFullImageUrl(activePhoto.publicId)}
-                alt=""
+                src={activePhoto.src}
+                alt={activePhoto.alt}
                 width={1600}
                 height={1200}
                 sizes="94vw"

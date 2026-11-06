@@ -82,9 +82,9 @@ export const weddingBride: WeddingConfig = {
         accounts: [
             {
                 owner: 'Mừng cưới',
-                bank: 'Tên ngân hàng',
-                bankCode: 'MB',          // mã VietQR: VCB, TCB, MB, ACB...
-                accountNo: '0868882082',
+                bank: 'Techcombank',
+                bankCode: 'TCB',          // mã VietQR: VCB, TCB, MB, ACB...
+                accountNo: '19073042833019',
                 accountName: 'Vũ Thị Hiền',
                 side: 'bride',           // tài khoản nhà nào; cùng side với thiệp thì được xếp trước
             },

@@ -14,7 +14,7 @@ import { CalendarSection, Couple, Events, Hero, Letter, MapSection, Thanks } fro
 import { AutoScrollButton } from '@/components/AutoScrollButton';
 
 // Phiên bản OG – tăng lên (3, 4, ...) mỗi khi đổi ảnh để Zalo/Facebook bỏ cache ảnh cũ
-const OG_VERSION = '3';
+const OG_VERSION = '4';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ??

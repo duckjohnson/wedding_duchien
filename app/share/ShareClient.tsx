@@ -11,7 +11,7 @@ export default function ShareClient() {
   }, []);
 
   const shareUrl = guest ? `${url}/?khach=${encodeURIComponent(guest.trim())}` : url;
-  const ogUrl = guest ? `${url}/api/og?guest=${encodeURIComponent(guest.trim())}` : `${url}/api/og`;
+  const ogUrl = `${url}/photos/og.jpg`;
 
   const copy = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -70,7 +70,7 @@ export default function ShareClient() {
 
       <div style={{ borderTop: '1px solid #eee', paddingTop: 20 }}>
         <h3 style={{ marginBottom: 10 }}>Xem trước Zalo Preview</h3>
-        <p style={{ fontSize: 13, color: '#666', marginBottom: 15 }}>Lưu ý: Ảnh này sinh trực tiếp theo tên bạn gõ.</p>
+        <p style={{ fontSize: 13, color: '#666', marginBottom: 15 }}>Ảnh xem trước dùng chung cho mọi khách; tên khách hiện ở tiêu đề thẻ.</p>
         <div style={{ width: '100%', aspectRatio: '1200/630', backgroundColor: '#eee', borderRadius: 12, overflow: 'hidden', border: '1px solid #ddd' }}>
           <img src={ogUrl} alt="Zalo Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>

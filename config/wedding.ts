@@ -151,7 +151,7 @@ export const wedding: WeddingConfig = {
 
   meta: {
     description: 'Chủ nhật, 22.11.2026 (Tức ngày 14 tháng 10 năm Bính Ngọ) – Rất hân hạnh được đón tiếp!',
-    ogImage: '/photos/a5.jpeg',
+    ogImage: '/photos/og.jpg', // ảnh xem trước Zalo/Facebook (cắt từ a3.jpeg, 1200×630)
   },
 
   // Ghi đè màu, ví dụ: { son: '#1F3A5F', kim: '#B89B5E' }

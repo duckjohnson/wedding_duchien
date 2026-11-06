@@ -217,7 +217,7 @@ export function Gift({ accounts }: { accounts: GiftView[] }) {
 
               <div className="gift-detail-row">
                 <span className="gift-detail-label">Chủ tài khoản</span>
-                <span className="gift-detail-value is-bold">{activeAcc.accountName || 'PHAM THAI HUNG'}</span>
+                <span className="gift-detail-value is-bold">{activeAcc.accountName || activeAcc.owner}</span>
               </div>
 
               <div className="gift-detail-row is-acc">

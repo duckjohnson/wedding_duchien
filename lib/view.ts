@@ -1,4 +1,4 @@
-import type { WeddingConfig, WeddingEvent } from '@/config/wedding';
+import type { Family, Person, Side, WeddingConfig, WeddingEvent } from '@/config/wedding';
 import { lunarText } from './lunar';
 
 const WEEKDAYS = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
@@ -48,11 +48,53 @@ function buildCalendar({ y, m, d }: YMD): CalendarCell[] {
 }
 
 export type EventView = WeddingEvent & { dateLong: string; lunarText: string; mapHref: string };
+
+/** Một bên (chú rể/nhà trai hoặc cô dâu/nhà gái) – đã sắp theo thứ tự hiển thị của thiệp */
+export type Party = {
+  key: Side;
+  role: 'Chú rể' | 'Cô dâu';
+  familyLabel: 'Nhà trai' | 'Nhà gái';
+  person: Person;
+  family: Family;
+  photo: string;
+  photoAlt: string;
+  defaultBio: string;
+};
 export type GiftView = WeddingConfig['gift']['accounts'][number] & { qrSrc: string; hasQr: boolean };
+
+/* ---------- Bản đồ nhúng ----------
+   Chấp nhận: link trong src của iframe "Nhúng bản đồ" (https://www.google.com/maps/embed?pb=...)
+   hoặc cả đoạn <iframe ...> (tự lấy src). Link chia sẻ (maps.app.goo.gl, /maps/place/...) không nhúng
+   được nên bị bỏ qua và dùng bản đồ tự tạo từ địa chỉ. */
+const EMBED_OK = /^https:\/\/(www\.)?google\.com\/maps\/embed\b|^https:\/\/maps\.google\.com\/maps\?.*output=embed/i;
+
+function embedSrc(raw: string | undefined, fallback: string): string {
+  const text = (raw ?? '').trim();
+  if (!text) return fallback;
+  const fromIframe = text.match(/src\s*=\s*["']([^"']+)["']/i)?.[1];
+  const url = (fromIframe ?? text).replace(/&amp;/g, '&').trim();
+  return EMBED_OK.test(url) ? url : fallback;
+}
+
+// Lấy toạ độ từ link nhúng (q=lat,lng hoặc !2dLNG!3dLAT) để nút "Chỉ đường" trỏ đúng điểm đã gắn trên bản đồ
+function mapHrefFromEmbed(src: string): string | null {
+  const q = src.match(/[?&]q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+  if (q) return `https://www.google.com/maps/search/?api=1&query=${q[1]},${q[2]}`;
+  const pb = src.match(/!2d(-?\d+(?:\.\d+)?)!3d(-?\d+(?:\.\d+)?)/);
+  if (pb) return `https://www.google.com/maps/search/?api=1&query=${pb[2]},${pb[1]}`;
+  return null;
+}
 
 export function buildView(w: WeddingConfig) {
   const main = w.events.find((e) => e.main) ?? w.events[w.events.length - 1];
   const md = parseDate(main.date);
+
+  const mapEmbed = embedSrc(
+    w.map.embedUrl,
+    `https://maps.google.com/maps?q=${encodeURIComponent(w.map.query || main.address || main.place)}&z=16&hl=vi&output=embed`,
+  );
+  // Thứ tự ưu tiên: mapUrl của sự kiện → toạ độ trong embedUrl (chỉ sự kiện chính) → tìm theo địa chỉ
+  const mainHref = main.mapUrl || mapHrefFromEmbed(mapEmbed) || mapLink(main);
 
   const events: EventView[] = w.events.map((ev) => {
     const p = parseDate(ev.date);
@@ -60,7 +102,7 @@ export function buildView(w: WeddingConfig) {
       ...ev,
       dateLong: `${weekdayOf(p)}, ngày ${pad(p.d)} tháng ${pad(p.m)} năm ${p.y}`,
       lunarText: lunarOf(ev),
-      mapHref: mapLink(ev),
+      mapHref: ev === main ? mainHref : mapLink(ev),
     };
   });
 
@@ -70,7 +112,12 @@ export function buildView(w: WeddingConfig) {
     return { src: photo(src, `Ảnh cưới ${i + 1}`, pw, ph, i), alt: `Ảnh cưới ${i + 1}`, shape };
   });
 
-  const gifts: GiftView[] = w.gift.accounts.map((acc) => {
+  // Tài khoản của nhà đang xem thiệp (hoặc chưa gắn side) xếp trước, tài khoản nhà bên kia xếp sau
+  const accounts = [...w.gift.accounts].sort(
+    (a, b) => Number(Boolean(a.side && a.side !== w.side)) - Number(Boolean(b.side && b.side !== w.side)),
+  );
+
+  const gifts: GiftView[] = accounts.map((acc) => {
     const no = acc.accountNo.replace(/\s/g, '');
     const auto = w.gift.autoVietQR && acc.bankCode && no
       ? `https://img.vietqr.io/image/${encodeURIComponent(acc.bankCode)}-${encodeURIComponent(no)}-compact.png?accountName=${encodeURIComponent(acc.accountName ?? '')}`
@@ -79,7 +126,36 @@ export function buildView(w: WeddingConfig) {
     return { ...acc, qrSrc: real || placeholder('Thêm mã QR', 300, 300, 1), hasQr: Boolean(real) };
   });
 
+  // Thiệp nhà nào thì bên đó đứng trước: tên, bố mẹ, ảnh chân dung, "Chú rể & Cô dâu"...
+  const groomParty: Party = {
+    key: 'groom',
+    role: 'Chú rể',
+    familyLabel: 'Nhà trai',
+    person: w.groom,
+    family: w.families.groom,
+    photo: photo(w.groom.photo, 'Ảnh chú rể', 600, 860, 1),
+    photoAlt: 'Chân dung chú rể',
+    defaultBio: 'Chàng trai điềm tĩnh, ấm áp và luôn chu đáo.',
+  };
+  const brideParty: Party = {
+    key: 'bride',
+    role: 'Cô dâu',
+    familyLabel: 'Nhà gái',
+    person: w.bride,
+    family: w.families.bride,
+    photo: photo(w.bride.photo, 'Ảnh cô dâu', 600, 860, 2),
+    photoAlt: 'Chân dung cô dâu',
+    defaultBio: 'Cô gái dịu dàng, nụ cười rạng rỡ và tràn đầy yêu thương.',
+  };
+  const parties: [Party, Party] = w.side === 'bride' ? [brideParty, groomParty] : [groomParty, brideParty];
+
   return {
+    side: w.side,
+    parties,
+    coupleTitle: `${parties[0].role} & ${parties[1].role}`,          // "Chú rể & Cô dâu" hoặc "Cô dâu & Chú rể"
+    coupleNames: `${parties[0].person.name} & ${parties[1].person.name}`,
+    heroKicker: w.kicker || (w.side === 'bride' ? 'Lễ vu quy' : 'Lễ thành hôn'),
+    sideLabel: parties[0].familyLabel,                                  // nhà của thiệp này
     weekday: weekdayOf(md),
     day: pad(md.d),
     monthLabel: `Tháng ${md.m}`,
@@ -89,16 +165,14 @@ export function buildView(w: WeddingConfig) {
     mainLunar: lunarOf(main),
     mainPlace: [main.place, main.address].filter(Boolean).join(', '),
     targetISO: `${main.date}T${main.time || '00:00'}:00+07:00`,
-    mapEmbed: w.map.embedUrl || `https://maps.google.com/maps?q=${encodeURIComponent(w.map.query || main.address || main.place)}&z=16&hl=vi&output=embed`,
-    mapHref: mapLink(main),
+    mapEmbed,
+    mapHref: mainHref,
     events,
     calendar: buildCalendar(md),
     gallery,
     gifts,
     photos: {
       hero: photo(w.photos.hero, 'Ảnh bìa', 800, 1100, 0),
-      groom: photo(w.groom.photo, 'Ảnh chú rể', 600, 860, 1),
-      bride: photo(w.bride.photo, 'Ảnh cô dâu', 600, 860, 2),
       thanks: photo(w.photos.thanks, 'Ảnh lời cảm ơn', 900, 1100, 2),
     },
   };

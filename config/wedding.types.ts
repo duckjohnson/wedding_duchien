@@ -2,6 +2,9 @@
    KIỂU DỮ LIỆU CHUNG – thường không cần sửa file này
    ========================================================= */
 
+/** 'groom' = nhà trai, 'bride' = nhà gái */
+export type Side = 'groom' | 'bride';
+
 export type Person = {
   name: string;       // tên hiển thị lớn
   fullName: string;   // tên đầy đủ trong phần lời mời
@@ -31,13 +34,16 @@ export type GiftAccount = {
   accountNo: string;
   accountName?: string;
   qrImage?: string;   // ảnh QR riêng (ưu tiên hơn VietQR tự tạo)
+  side?: Side;        // tài khoản của nhà nào; tài khoản cùng side với thiệp được xếp lên trước
 };
 
 export type Wish = { name: string; message: string };
 
 export type WeddingConfig = {
   /** 'groom' = thiệp nhà trai (tên trai đứng trước), 'bride' = thiệp nhà gái (tên gái đứng trước) */
-  side: 'groom' | 'bride';
+  side: Side;
+  /** Dòng chữ nhỏ trên ảnh bìa; để trống = tự chọn theo side (Lễ thành hôn / Lễ vu quy) */
+  kicker?: string;
   groom: Person;
   bride: Person;
   families: { groom: Family; bride: Family };

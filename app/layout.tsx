@@ -12,6 +12,8 @@ const SITE_URL =
     : null) ??
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
+// Layout không đọc được ?side=, nên dùng side mặc định (NEXT_PUBLIC_WEDDING_SIDE).
+// Tiêu đề/ảnh xem trước theo ?side= do generateMetadata trong app/page.tsx ghi đè.
 // Nhà trai: "Hữu Đức & Vũ Hiền" – Nhà gái: "Vũ Hiền & Hữu Đức"
 const [first, second] =
   wedding.side === 'bride'

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { wedding } from '@/config/wedding';
+import { getWedding, normalizeSide, DEFAULT_SIDE, type Side, type WeddingConfig } from '@/config/wedding';
 import { buildView } from '@/lib/view';
 import { Cover } from '@/components/Cover';
 import { MusicButton, Petals } from '@/components/Effects';
@@ -26,17 +26,25 @@ const SITE_URL =
     : null) ??
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
 
-// Nhà trai: "Hữu Đức & Vũ Hiền" – Nhà gái: "Vũ Hiền & Hữu Đức"
-const [firstName, secondName] =
-  wedding.side === 'bride'
-    ? [wedding.bride.name, wedding.groom.name]
-    : [wedding.groom.name, wedding.bride.name];
-const COUPLE = `${firstName} & ${secondName}`;
-
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
+type SP = Record<string, string | string[] | undefined>;
+
+// Thiệp nhà trai hay nhà gái: /?side=groom | /?side=bride (hoặc /nha-trai, /nha-gai).
+// Không có thì dùng NEXT_PUBLIC_WEDDING_SIDE (mặc định nhà trai).
+function sideFrom(sp: SP): { side: Side; fromLink: boolean } {
+  const explicit = normalizeSide(sp.side ?? sp.nha);
+  return { side: explicit ?? DEFAULT_SIDE, fromLink: explicit !== null };
+}
+
+// Nhà trai: "Hữu Đức & Vũ Hiền" – Nhà gái: "Vũ Hiền & Hữu Đức"
+function coupleOf(w: WeddingConfig) {
+  const [first, second] = w.side === 'bride' ? [w.bride.name, w.groom.name] : [w.groom.name, w.bride.name];
+  return `${first} & ${second}`;
+}
+
 // Tên khách lấy từ link: /?khach=Anh%20Nam hoặc /?name=... hoặc /?guest=...
-function guestFrom(sp: Record<string, string | string[] | undefined>) {
+function guestFrom(sp: SP, wedding: WeddingConfig) {
   const raw = sp.khach ?? sp.name ?? sp.guest ?? sp.to;
   const value = (Array.isArray(raw) ? raw[0] : raw)?.trim().slice(0, 60) ?? '';
   return { guest: value || wedding.defaultGuest, fromLink: Boolean(value), rawGuest: value };
@@ -44,9 +52,10 @@ function guestFrom(sp: Record<string, string | string[] | undefined>) {
 
 // Lọc tham số theo dõi (utm_*, fbclid, zarsrc) khỏi URL canonical
 // Thêm v=OG_VERSION để Zalo/Facebook coi đây là URL mới và quét lại ảnh (bỏ cache cũ)
-function cleanUrl(baseUrl: string, guestName: string): string {
+function cleanUrl(baseUrl: string, guestName: string, side?: Side): string {
   const url = new URL(baseUrl);
   if (guestName) url.searchParams.set('khach', guestName);
+  if (side) url.searchParams.set('side', side); // chỉ khi link có ghi rõ side, để Zalo/Facebook quét đúng thiệp
   url.searchParams.set('v', OG_VERSION);
   return url.toString();
 }
@@ -60,7 +69,10 @@ function ogImageUrl(): string {
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const sp = await searchParams;
-  const { rawGuest } = guestFrom(sp);
+  const { side, fromLink: sideFromLink } = sideFrom(sp);
+  const wedding = getWedding(side);
+  const COUPLE = coupleOf(wedding);
+  const { rawGuest } = guestFrom(sp, wedding);
 
   const title = rawGuest
     ? `Thân mời ${rawGuest} đến dự lễ cưới ${COUPLE}`
@@ -68,7 +80,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   const description = wedding.meta.description;
   const image = ogImageUrl();
-  const canonicalUrl = cleanUrl(`${SITE_URL}/`, rawGuest);
+  const canonicalUrl = cleanUrl(`${SITE_URL}/`, rawGuest, sideFromLink ? side : undefined);
 
   return {
     title,
@@ -106,29 +118,31 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function Page({ searchParams }: Props) {
-  const { guest, fromLink } = guestFrom(await searchParams);
+  const sp = await searchParams;
+  const wedding = getWedding(sideFrom(sp).side);
+  const { guest, fromLink } = guestFrom(sp, wedding);
   const v = buildView(wedding);
 
   return (
     <InviteProvider coverEnabled={wedding.cover.enabled} music={wedding.music}>
       <SvgSprite />
       {wedding.cover.enabled ? (
-        <Cover groomName={wedding.groom.name} brideName={wedding.bride.name} dateShort={v.dateShort} guest={guest} />
+        <Cover firstName={v.parties[0].person.name} secondName={v.parties[1].person.name} dateShort={v.dateShort} guest={guest} />
       ) : null}
 
       <main className="page" id="page">
         <Hero w={wedding} v={v} />
-        <Letter w={wedding} guest={guest} />
+        <Letter w={wedding} v={v} guest={guest} />
         <Couple w={wedding} v={v} />
         <Events v={v} />
         <CalendarSection v={v} />
         <Gallery items={v.gallery} />
         <MapSection v={v} />
         {wedding.rsvp.enabled ? (
-          <Rsvp guest={guest} guestFromLink={fromLink} deadline={wedding.rsvp.deadline} />
+          <Rsvp guest={guest} guestFromLink={fromLink} deadline={wedding.rsvp.deadline} sideLabel={v.sideLabel} />
         ) : null}
-        <WishesBook />
-        {wedding.gift.enabled ? <Gift accounts={v.gifts} /> : null}
+        <WishesBook defaultSide={wedding.side} />
+        {wedding.gift.enabled ? <Gift accounts={v.gifts} couple={v.coupleTitle.toLowerCase()} /> : null}
         <Thanks w={wedding} v={v} />
       </main>
 

@@ -15,7 +15,25 @@ Mở `http://localhost:3000/?khach=Anh%20Nam` để thấy tên khách trên pho
 
 ## Sửa nội dung
 
-Chỉ cần sửa **`config/wedding.ts`**: tên, bố mẹ, ngày giờ, địa điểm, lời mời, ảnh, số tài khoản, nhạc, màu.
+Nội dung thiệp nằm ở hai file, mỗi nhà một file:
+
+- **`config/wedding.groom.ts`** – thiệp **nhà trai** (tên chú rể, bố mẹ nhà trai đứng trước)
+- **`config/wedding.bride.ts`** – thiệp **nhà gái** (tên cô dâu, bố mẹ nhà gái đứng trước)
+
+`config/wedding.ts` chỉ là bộ chọn giữa hai file này, không cần sửa. Trong mỗi file sửa: tên, bố mẹ, ngày giờ, địa điểm, lời mời, ảnh, số tài khoản, nhạc, màu.
+
+### Chọn thiệp nhà trai / nhà gái
+
+| Cách | Dùng khi |
+|---|---|
+| Biến môi trường `NEXT_PUBLIC_WEDDING_SIDE=groom` hoặc `bride` (mặc định `groom`) | Mỗi nhà một lần build/deploy, hai tên miền riêng |
+| `?side=groom` / `?side=bride` hoặc đường dẫn `/nha-trai`, `/nha-gai` | Một deployment dùng chung, hai loại link (giữ được `?khach=...`) |
+
+Link có ghi rõ side luôn thắng giá trị mặc định của biến môi trường. Trang `/share` có ô chọn nhà để tạo link cho khách.
+
+Side quyết định: thứ tự tên trên phong bì và ảnh bìa, nhãn lễ (Lễ thành hôn / Lễ vu quy), thứ tự Nhà trai/Nhà gái trong lời mời, thứ tự "Chú rể & Cô dâu", nhà mặc định của form xác nhận tham dự và lưu bút. Sự kiện, địa điểm, bản đồ, hạn RSVP, ảnh, hộp mừng cưới lấy theo file của từng nhà.
+
+**Hộp mừng cưới:** mỗi tài khoản có thể ghi `side: 'groom' | 'bride'`. Tài khoản cùng nhà với thiệp xếp trước; muốn thiệp chỉ hiện tài khoản nhà mình thì chỉ khai báo một tài khoản.
 
 - **Ảnh:** bỏ vào `public/photos/`, rồi ghi `"/photos/ten-file.jpg"`. Next.js tự nén và cắt cỡ ảnh cho từng màn hình. Ô nào để trống sẽ hiện ảnh placeholder.
 - **Ảnh từ web khác:** thêm tên miền vào `images.remotePatterns` trong `next.config.ts`.
@@ -87,7 +105,9 @@ Form gửi tới `/api/rsvp` (file `app/api/rsvp/route.ts`). Khi khách gửi RS
 ## Cấu trúc thư mục
 
 ```
-config/wedding.ts        Nội dung thiệp (thông tin cô dâu chú rể, địa điểm...)
+config/wedding.groom.ts  Nội dung thiệp nhà trai
+config/wedding.bride.ts  Nội dung thiệp nhà gái
+config/wedding.ts        Bộ chọn nhà trai / nhà gái (NEXT_PUBLIC_WEDDING_SIDE, ?side=)
 app/layout.tsx           Font, metadata, màu chủ đạo
 app/page.tsx             Ghép các section theo thứ tự
 app/globals.css          Toàn bộ CSS hệ thống & thiết kế chống tràn

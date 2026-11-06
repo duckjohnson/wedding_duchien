@@ -4,12 +4,12 @@ import { useRef, useState, type FormEvent } from 'react';
 import type { Wish } from '@/config/wedding';
 import { SectionHead } from './Ornaments';
 
-type Props = { guest: string; guestFromLink: boolean; deadline?: string; initialWishes?: Wish[] };
+type Props = { guest: string; guestFromLink: boolean; deadline?: string; initialWishes?: Wish[]; sideLabel?: 'Nhà trai' | 'Nhà gái' };
 
 type Attend = 'Có' | 'Không' | 'Chưa chắc';
 const CHOICES: [Attend, string][] = [['Có', 'Mình sẽ đến'], ['Không', 'Tiếc quá, mình bận'], ['Chưa chắc', 'Chưa chắc']];
 
-export function Rsvp({ guest, guestFromLink, deadline }: Props) {
+export function Rsvp({ guest, guestFromLink, deadline, sideLabel = 'Nhà trai' }: Props) {
   const [error, setError] = useState('');
   const [invalid, setInvalid] = useState<'name' | 'attend' | null>(null);
   const [sending, setSending] = useState(false);
@@ -142,7 +142,7 @@ export function Rsvp({ guest, guestFromLink, deadline }: Props) {
             <option value="5+">5 người trở lên</option>
           </select>
         </div>
-        <input type="hidden" name="side" value="Nhà trai" />
+        <input type="hidden" name="side" value={sideLabel} />
         <div className="field">
           <label htmlFor="f-msg">Lời chúc gửi chú rể và cô dâu</label>
           <textarea className="input" id="f-msg" name="message" rows={3} maxLength={300} placeholder="Gửi lời chúc hạnh phúc tới đôi uyên ương..." />

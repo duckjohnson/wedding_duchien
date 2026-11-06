@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 
 export default function ShareClient() {
   const [guest, setGuest] = useState('');
+  // '' = để trang tự chọn theo cấu hình của site; 'groom' / 'bride' = ghi rõ vào link
+  const [side, setSide] = useState<'' | 'groom' | 'bride'>('');
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -10,7 +12,11 @@ export default function ShareClient() {
     setUrl(window.location.origin);
   }, []);
 
-  const shareUrl = guest ? `${url}/?khach=${encodeURIComponent(guest.trim())}` : url;
+  const params = new URLSearchParams();
+  if (guest.trim()) params.set('khach', guest.trim());
+  if (side) params.set('side', side);
+  const query = params.toString();
+  const shareUrl = query ? `${url}/?${query}` : url;
   const ogUrl = `${url}/photos/og.jpg`;
 
   const copy = () => {
@@ -26,7 +32,7 @@ export default function ShareClient() {
   const nativeShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `Thân mời ${guest} đến dự lễ cưới Vũ Hiền & Hữu Đức`,
+        title: `Thân mời ${guest} đến dự lễ cưới ${side === 'bride' ? 'Vũ Hiền & Hữu Đức' : 'Hữu Đức & Vũ Hiền'}`,
         url: shareUrl,
       });
     }
@@ -47,6 +53,20 @@ export default function ShareClient() {
           placeholder="Nhập tên khách... (VD: Anh ...)"
           style={{ width: '100%', padding: '12px', fontSize: 16, borderRadius: 8, border: '1px solid #ccc' }}
         />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <label htmlFor="share-side" style={{ display: 'block', marginBottom: 8, fontWeight: 'bold' }}>Thiệp của nhà:</label>
+        <select
+          id="share-side"
+          value={side}
+          onChange={(e) => setSide(e.target.value as '' | 'groom' | 'bride')}
+          style={{ width: '100%', padding: '12px', fontSize: 16, borderRadius: 8, border: '1px solid #ccc' }}
+        >
+          <option value="">Mặc định của trang này</option>
+          <option value="groom">Nhà trai (tên chú rể đứng trước)</option>
+          <option value="bride">Nhà gái (tên cô dâu đứng trước)</option>
+        </select>
       </div>
 
       <div style={{ marginBottom: 30 }}>

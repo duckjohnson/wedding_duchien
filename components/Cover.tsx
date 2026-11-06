@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { prefersReducedMotion, useInvite } from './InviteProvider';
 
-type Props = { groomName: string; brideName: string; dateShort: string; guest: string };
+// firstName đứng trước: nhà trai → tên chú rể, nhà gái → tên cô dâu
+type Props = { firstName: string; secondName: string; dateShort: string; guest: string };
 
 type Phase = 'idle' | 'open' | 'leaving' | 'gone';
 
-export function Cover({ groomName, brideName, dateShort, guest }: Props) {
+export function Cover({ firstName, secondName, dateShort, guest }: Props) {
   const { playMusic, markOpened } = useInvite();
   const [phase, setPhase] = useState<Phase>('idle');
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -37,9 +38,9 @@ export function Cover({ groomName, brideName, dateShort, guest }: Props) {
       <div className="cover-inner">
         <p className="cover-kicker">Thiệp mời cưới</p>
         <p className="cover-names">
-          {brideName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+          {firstName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
           <span className="amp">&amp;</span>
-          {groomName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+          {secondName.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
         </p>
         <button className="env" type="button" aria-label="Mở thiệp mời" onClick={open}>
           <span className="env-back" />

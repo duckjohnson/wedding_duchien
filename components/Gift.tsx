@@ -20,7 +20,7 @@ async function copyText(text: string) {
   }
 }
 
-export function Gift({ accounts }: { accounts: GiftView[] }) {
+export function Gift({ accounts, couple = 'chú rể & cô dâu' }: { accounts: GiftView[]; couple?: string }) {
   const [activeAcc, setActiveAcc] = useState<GiftView | null>(null);
   const [toast, setToast] = useState('');
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -58,7 +58,7 @@ export function Gift({ accounts }: { accounts: GiftView[] }) {
       <SectionHead
         id="t-gift"
         title="Hộp mừng cưới"
-        sub="Gửi những lời chúc tốt đẹp cùng món quà ý nghĩa tới cô dâu & chú rể"
+        sub={`Gửi những lời chúc tốt đẹp cùng món quà ý nghĩa tới ${couple}`}
       />
 
       {/* Danh sách các hộp quà */}

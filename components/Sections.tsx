@@ -12,6 +12,10 @@ import { Corners, delay, Divider, SectionHead } from './Ornaments';
 
 type P = { w: WeddingConfig; v: View };
 
+// Chữ "A" trong tên dùng font riêng (Allison)
+const withA = (name: string) =>
+  name.split('A').flatMap((part, i, arr) => (i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part]));
+
 /* ===================== 1. ẢNH CÔ DÂU CHÚ RỂ (HERO) ===================== */
 export function Hero({ w, v }: P) {
   const heroRef = useRef<HTMLElement>(null);
@@ -33,7 +37,7 @@ export function Hero({ w, v }: P) {
 
   return (
     <section className="hero" id="top" ref={heroRef}>
-      <p className="hero-kicker" data-reveal="up">Lễ vu quy</p>
+      <p className="hero-kicker" data-reveal="up">{v.heroKicker}</p>
 
       {/* Lớp 2: Khung viền ảnh + 3D Tilt theo chuột trên desktop và gyroscope trên mobile */}
       <motion.div
@@ -80,11 +84,11 @@ export function Hero({ w, v }: P) {
       <motion.div style={{ y: reduced ? 0 : yText }}>
         <h1 className="hero-names" id="heroTitle" tabIndex={-1}>
           <span className="hn" data-reveal="up" style={delay(0.6)}>
-            {w.bride.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+            {withA(v.parties[0].person.name)}
           </span>
           <span className="hn-amp" data-reveal="zoom" style={delay(0.8)}>&amp;</span>
           <span className="hn" data-reveal="up" style={delay(0.95)}>
-            {w.groom.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+            {withA(v.parties[1].person.name)}
           </span>
         </h1>
         <div className="datelock" data-reveal="up" style={delay(1.15)}>
@@ -105,7 +109,7 @@ export function Hero({ w, v }: P) {
 }
 
 /* ===================== 2. LỜI MỜI ===================== */
-export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
+export function Letter({ w, v, guest }: { w: WeddingConfig; v: View; guest: string }) {
   const fam = (label: string, f: WeddingConfig['families']['groom'], dir: 'left' | 'right', d: number) => (
     <div className="family" data-reveal={dir} style={delay(d)}>
       <h3 className="family-label">{label}</h3>
@@ -118,8 +122,8 @@ export function Letter({ w, guest }: { w: WeddingConfig; guest: string }) {
     <section className="sec letter" id="loimoi" aria-labelledby="t-letter">
       <h2 className="sr-only" id="t-letter">Thư mời</h2>
       <div className="families">
-        {fam('Nhà gái', w.families.bride, 'left', 0)}
-        {fam('Nhà trai', w.families.groom, 'right', 0.1)}
+        {fam(v.parties[0].familyLabel, v.parties[0].family, 'left', 0)}
+        {fam(v.parties[1].familyLabel, v.parties[1].family, 'right', 0.1)}
       </div>
       <div className="hy" data-reveal="zoom" aria-hidden="true">囍</div>
       <Divider />
@@ -139,30 +143,18 @@ export function Couple({ w, v }: P) {
     setReduced(prefersReducedMotion());
   }, []);
 
-  const people = [
-    {
-      p: w.bride,
-      role: 'Cô dâu',
-      src: v.photos.bride,
-      alt: 'Chân dung cô dâu',
-      cls: 'portrait',
-      rotateInitial: -40,
-      xInitial: -50,
-      delay: 0,
-      defaultBio: 'Cô gái dịu dàng, nụ cười rạng rỡ và tràn đầy yêu thương.',
-    },
-    {
-      p: w.groom,
-      role: 'Chú rể',
-      src: v.photos.groom,
-      alt: 'Chân dung chú rể',
-      cls: 'portrait portrait--low',
-      rotateInitial: 40,
-      xInitial: 50,
-      delay: 0.16,
-      defaultBio: 'Chàng trai điềm tĩnh, ấm áp và luôn chu đáo.',
-    },
-  ];
+  // Bên đứng trước (theo side của thiệp) đi vào từ bên trái, bên còn lại từ bên phải
+  const people = v.parties.map((party, i) => ({
+    p: party.person,
+    role: party.role,
+    src: party.photo,
+    alt: party.photoAlt,
+    cls: i === 0 ? 'portrait' : 'portrait portrait--low',
+    rotateInitial: i === 0 ? -40 : 40,
+    xInitial: i === 0 ? -50 : 50,
+    delay: i === 0 ? 0 : 0.16,
+    defaultBio: party.defaultBio,
+  }));
 
   const handleToggleFlip = (role: string) => {
     setFlippedRole((prev) => (prev === role ? null : role));
@@ -170,7 +162,7 @@ export function Couple({ w, v }: P) {
 
   return (
     <section className="sec couple" aria-labelledby="t-couple">
-      <SectionHead id="t-couple" title="Chú rể & Cô dâu" />
+      <SectionHead id="t-couple" title={v.coupleTitle} />
       <div className="couple-grid">
         {people.map(({ p, role, src, alt, cls, rotateInitial, xInitial, delay: d, defaultBio }) => {
           const isFlipped = flippedRole === role;
@@ -212,7 +204,7 @@ export function Couple({ w, v }: P) {
                       <span className="flip-card-hy">囍</span>
                       <span className="flip-card-role">{role}</span>
                       <h3 className="flip-card-name">
-                        {p.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+                        {withA(p.name)}
                       </h3>
                       <p className="flip-card-bio">{p.bio || defaultBio}</p>
                       <span className="flip-card-tip">Chạm để lật ảnh</span>
@@ -224,7 +216,7 @@ export function Couple({ w, v }: P) {
               <figcaption>
                 <span className="portrait-role">{role}</span>
                 <span className="portrait-name">
-                  {p.name.split('A').flatMap((part, i, arr) => i < arr.length - 1 ? [part, <span key={i} className="font-allison">A</span>] : [part])}
+                  {withA(p.name)}
                 </span>
               </figcaption>
             </motion.figure>
